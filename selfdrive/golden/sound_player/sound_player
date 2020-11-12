@@ -1,0 +1,4 @@
+#!/bin/sh
+export LD_LIBRARY_PATH="/system/lib64:$LD_LIBRARY_PATH"
+exec /data/openpilot/selfdrive/golden/sound_player/_sound_player $@
+

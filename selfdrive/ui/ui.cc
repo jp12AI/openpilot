@@ -69,6 +69,8 @@ void ui_init(UIState *s) {
   assert(s->fb);
 
   ui_nvg_init(s);
+
+  s->scene.lane_offset = 0.0F;
 }
 
 static void ui_init_vision(UIState *s) {
@@ -320,5 +322,22 @@ void ui_update(UIState *s) {
     } else {
       s->scene.athenaStatus = NET_ERROR;
     }
+  }
+
+  // golden patched
+  if ((s->sm)->frame % (10*UI_FREQ) == 0) {
+     // stock additions todo: run opparams first (in main()?) to ensure json values exist
+      std::ifstream op_params_file("/data/op_params.json");
+      std::string op_params_content((std::istreambuf_iterator<char>(op_params_file)),
+                                    (std::istreambuf_iterator<char>()));
+
+      std::string err;
+      auto json = json11::Json::parse(op_params_content, err);
+      if (!json.is_null() && err.empty()) {
+        //printf("successfully parsed opParams json\n");
+        s->scene.lane_offset = json["lane_offset"].number_value();
+      } else {  // error parsing json
+        printf("ERROR PARSING OPPARAMS JSON!\n");
+      }
   }
 }

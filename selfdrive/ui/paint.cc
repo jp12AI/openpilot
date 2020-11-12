@@ -536,6 +536,12 @@ static void ui_draw_ls_button(UIState *s) {
   nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 255));
   nvgFontSize(s->vg, 45);
   nvgText(s->vg, btn_x - 34, btn_y + 50 + 15, "mode", NULL);
+
+  // golden patched
+  char text_buf[32];
+  nvgFontSize(s->vg, 60);
+  snprintf(text_buf, sizeof(text_buf), "offset: %.2f", s->scene.lane_offset);
+  nvgText(s->vg, 5, s->scene.viz_rect.bottom() / 2.0 - 10, text_buf, NULL);
 }
 
 static void ui_draw_df_button(UIState *s) {

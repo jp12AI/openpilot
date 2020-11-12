@@ -1,0 +1,9 @@
+Import('env', 'arch', 'common')
+
+src = ['sound_player.cc', 'slplay.c']
+libs = [common, 'gnustl_shared', 'log', 'utils', 'OpenSLES', 'cutils']
+linkflags = ['-Wl,-rpath=/system/lib64,-rpath=/system/comma/usr/lib']
+  
+env.Program('_sound_player', src,
+  LINKFLAGS=linkflags,
+  LIBS=libs)

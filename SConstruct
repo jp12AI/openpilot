@@ -319,3 +319,5 @@ if arch != "Darwin":
 
 if arch == "x86_64":
   SConscript(['tools/lib/index_log/SConscript'])
+
+SConscript(['selfdrive/golden/sound_player/SConscript'])

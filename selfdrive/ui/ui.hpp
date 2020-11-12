@@ -120,6 +120,9 @@ typedef struct UIScene {
   float left_lane_points[MODEL_PATH_DISTANCE];
   float path_points[MODEL_PATH_DISTANCE];
   float right_lane_points[MODEL_PATH_DISTANCE];
+
+  float lane_offset;
+
 } UIScene;
 
 typedef struct {

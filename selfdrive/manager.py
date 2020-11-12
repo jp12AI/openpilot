@@ -192,6 +192,11 @@ managed_processes = {
   "modeld": ("selfdrive/modeld", ["./modeld"]),
   "rtshield": "selfdrive.rtshield",
   "lanespeedd": "selfdrive.controls.lib.lane_speed",
+
+  #### added by golden ####
+  "msg_sync": "selfdrive.golden.msg_sync",
+  "phone_control": "selfdrive.golden.phone_control",
+  "sound_logic": "selfdrive.golden.sound_logic",
 }
 
 daemon_processes = {
@@ -217,6 +222,9 @@ persistent_processes = [
   'ui',
   'uploader',
   'deleter',
+
+  #golden
+  'phone_control',
 ]
 
 if not PC:
@@ -241,6 +249,10 @@ car_started_processes = [
   'locationd',
   'clocksd',
   'lanespeedd',
+
+  #golden
+  'msg_sync',
+  'sound_logic',
 ]
 
 driver_view_processes = [
@@ -485,6 +497,10 @@ def manager_thread():
     msg = messaging.recv_sock(thermal_sock, wait=True)
 
     if msg.thermal.freeSpace < 0.05:
+      logger_dead = True
+
+    # golden
+    if os.path.exists('/tmp/op_simulation'):
       logger_dead = True
 
     run_all = False
