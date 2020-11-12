@@ -539,9 +539,10 @@ static void ui_draw_ls_button(UIState *s) {
 
   // golden patched
   char text_buf[32];
-  nvgFontSize(s->vg, 60);
+  nvgFontSize(s->vg, 65);
   snprintf(text_buf, sizeof(text_buf), "offset: %.2f", s->scene.lane_offset);
-  nvgText(s->vg, 5, s->scene.viz_rect.bottom() / 2.0 - 10, text_buf, NULL);
+  const int x_ofset = scene->viz_rect.x + bdr_s;
+  nvgText(s->vg, x_ofset, s->scene.viz_rect.bottom() / 2.0 - 10, text_buf, NULL);
 }
 
 static void ui_draw_df_button(UIState *s) {

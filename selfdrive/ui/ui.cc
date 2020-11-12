@@ -327,17 +327,10 @@ void ui_update(UIState *s) {
   // golden patched
   if ((s->sm)->frame % (10*UI_FREQ) == 0) {
      // stock additions todo: run opparams first (in main()?) to ensure json values exist
-      std::ifstream op_params_file("/data/op_params.json");
+      std::ifstream op_params_file("/tmp/lane_offset");
       std::string op_params_content((std::istreambuf_iterator<char>(op_params_file)),
                                     (std::istreambuf_iterator<char>()));
 
-      std::string err;
-      auto json = json11::Json::parse(op_params_content, err);
-      if (!json.is_null() && err.empty()) {
-        //printf("successfully parsed opParams json\n");
-        s->scene.lane_offset = json["lane_offset"].number_value();
-      } else {  // error parsing json
-        printf("ERROR PARSING OPPARAMS JSON!\n");
-      }
+      s->scene.lane_offset = std::stof(op_params_content);
   }
 }

@@ -11,6 +11,9 @@ try:
 except:
   pass
 
+#golden
+import os
+
 # try:
 #   from common.realtime import sec_since_boot
 # except ImportError:
@@ -74,6 +77,8 @@ class LaneSpeed:
     # golden patch
     self._ego_lane = 'middle'
     self._ego_lane_change_wait_frames = 0
+    self._lane_offset = 0.0
+    self._frames = 0
 
   def _setup(self):
     self.button_updated = False
@@ -311,7 +316,10 @@ class LaneSpeed:
 
   # golden patch
   def update_ego_lane_position(self):
-    if self.v_ego > 20.0 / 3.6:
+
+    enabled = self.sm['carState'].cruiseState.enabled
+
+    if self.v_ego > 20.0 / 3.6 and enabled:
       left_num = len(self.lanes['left'].tracks)
       right_num = len(self.lanes['right'].tracks)
 
@@ -357,14 +365,15 @@ class LaneSpeed:
       self._ego_lane = 'middle'
 
     offset = 0.0
-
     if self._ego_lane == 'left':
       offset = 0.15
     elif self._ego_lane == 'right':
       offset = -0.15
 
-    self.op_params.put('lane_offset', offset)
-
+    if self._lane_offset != offset:
+      self.op_params.put('lane_offset', offset)
+      self._lane_offset = offset
+      os.system('echo ' + str(offset) + ' > /tmp/lane_offset')
 
 # class Track:
 #   def __init__(self, vRel, yRel, dRel):
