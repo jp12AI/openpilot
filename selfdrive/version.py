@@ -53,6 +53,9 @@ tested_branch: bool = False
 origin = get_git_remote()
 branch = get_git_full_branchname()
 
+comma_remote = origin.startswith('git@github.com:commaai') or origin.startswith('https://github.com/commaai')
+smiskol_remote = origin.startswith('git@github.com:shanesmiskol') or origin.startswith('https://github.com/shanesmiskol')
+
 if (origin is not None) and (branch is not None):
   try:
     comma_remote = origin.startswith('git@github.com:commaai') or origin.startswith('https://github.com/commaai')
