@@ -331,6 +331,12 @@ void ui_update(UIState *s) {
       std::string op_params_content((std::istreambuf_iterator<char>(op_params_file)),
                                     (std::istreambuf_iterator<char>()));
 
-      s->scene.lane_offset = std::stof(op_params_content);
+      try {
+        s->scene.lane_offset = std::stof(op_params_content);
+      }
+      catch (...)
+      {
+        printf ("error loading /tmp/lane_offset\n");
+      }
   }
 }
