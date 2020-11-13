@@ -541,7 +541,7 @@ static void ui_draw_ls_button(UIState *s) {
   char text_buf[32];
   nvgFontSize(s->vg, 65);
   snprintf(text_buf, sizeof(text_buf), "offset: %.2f", s->scene.lane_offset);
-  const int x_ofset = s->scene.viz_rect.x + bdr_s * 2;
+  const int x_ofset = s->scene.viz_rect.x + bdr_s * 4;
   nvgText(s->vg, x_ofset, s->scene.viz_rect.bottom() / 2.0 - 10, text_buf, NULL);
 }
 
