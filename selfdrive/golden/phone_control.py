@@ -175,8 +175,11 @@ def process_phone_data(sync_data):
 def clear_params(op_params):
     params = Params()
     params.delete("Offroad_ConnectivityNeeded")
-    # force doing re-carlibartion every time you reboot EON
-    params.delete("CalibrationParams")
+
+    if os.path.exists('/tmp/force_calibration'):
+      params.delete("CalibrationParams")
+      os.system('rm /tmp/force_calibration')
+
     now = datetime.datetime.now()
     t = now.isoformat()
     if now.year < 2000:

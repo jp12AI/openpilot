@@ -19,6 +19,7 @@ import signal
 
 def main():
   os.system('echo 1 > /tmp/op_simulation')
+  os.system('echo 1 > /tmp/force_calibration')
   os.system('service call audio 3 i32 3 i32 0 i32 1')
 
   global pm
