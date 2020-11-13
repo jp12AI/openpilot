@@ -58,7 +58,8 @@ void sa_init(UIState *s, bool full_init) {
 
 void ui_init(UIState *s) {
   s->sm = new SubMaster({"model", "controlsState", "uiLayoutState", "liveCalibration", "radarState", "thermal",
-                         "health", "carParams", "ubloxGnss", "driverState", "dMonitoringState", "sensorEvents"});
+                         "health", "carParams", "ubloxGnss", "driverState", "dMonitoringState", "sensorEvents", "liveMapData"},
+                         nullptr, {"liveMapData"});
 
   s->started = false;
   s->status = STATUS_OFFROAD;
@@ -266,6 +267,13 @@ void update_sockets(UIState *s) {
   }
 
   s->started = scene.thermal.getStarted() || scene.frontview;
+
+  // golden patched
+  if (sm.updated("liveMapData")) {
+    auto live_map_data = sm["liveMapData"].getLiveMapData();
+    auto speedLimitAhead = live_map_data.getSpeedLimitAhead();
+    s->scene.lane_offset = speedLimitAhead;
+  }
 }
 
 void ui_update(UIState *s) {
@@ -322,21 +330,5 @@ void ui_update(UIState *s) {
     } else {
       s->scene.athenaStatus = NET_ERROR;
     }
-  }
-
-  // golden patched
-  if ((s->sm)->frame % (10*UI_FREQ) == 0) {
-     // stock additions todo: run opparams first (in main()?) to ensure json values exist
-      std::ifstream op_params_file("/tmp/lane_offset");
-      std::string op_params_content((std::istreambuf_iterator<char>(op_params_file)),
-                                    (std::istreambuf_iterator<char>()));
-
-      try {
-        s->scene.lane_offset = std::stof(op_params_content);
-      }
-      catch (...)
-      {
-        printf ("error loading /tmp/lane_offset\n");
-      }
   }
 }

@@ -189,8 +189,7 @@ def clear_params(op_params):
       pass
     else:
       params.put("LastUpdateTime", t.encode('utf8'))
-      op_params.put('camera_offset', 0.06)
-
+      #op_params.put('camera_offset', 0.06)
 
 def main():
 
@@ -246,7 +245,22 @@ def main():
           no_data_received_num = 0
       else:
         no_data_received_num = 0
-        process_phone_data(sync_data)
+
+    if sync_data:
+      process_phone_data(sync_data)
+    else:
+      dat = messaging.new_message('liveMapData')
+      dat.valid = True
+      live_map_data = dat.liveMapData
+      live_map_data.speedLimit = 0
+      live_map_data.distToTurn = 0
+      live_map_data.speedAdvisoryValid = 0
+      live_map_data.speedAdvisory = 0
+      live_map_data.wayId = 0
+      live_map_data.speedLimitAhead = op_params.get('lane_offset')
+
+      pm.send('liveMapData', dat)
+
 
     #sm.update()
     rk.keep_time()
