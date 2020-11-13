@@ -162,6 +162,10 @@ class Calibrator():
       return None
 
   def send_data(self, pm):
+
+    if os.path.exists('/tmp/op_simulation'):
+      self.cal_status = Calibration.CALIBRATED
+
     smooth_rpy = self.get_smooth_rpy()
     extrinsic_matrix = get_view_frame_from_road_frame(0, smooth_rpy[1], smooth_rpy[2], model_height)
 
