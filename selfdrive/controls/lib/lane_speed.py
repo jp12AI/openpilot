@@ -366,14 +366,13 @@ class LaneSpeed:
 
     offset = 0.0
     if self._ego_lane == 'left':
-      offset = 0.15
+      offset = 0.2
     elif self._ego_lane == 'right':
-      offset = -0.15
+      offset = -0.2
 
     if self._lane_offset != offset:
       self.op_params.put('lane_offset', offset)
       self._lane_offset = offset
-      os.system('echo ' + str(offset) + ' > /tmp/lane_offset')
 
 # class Track:
 #   def __init__(self, vRel, yRel, dRel):
