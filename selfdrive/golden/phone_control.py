@@ -255,7 +255,7 @@ def main():
       live_map_data = dat.liveMapData
       live_map_data.speedLimit = 0
       live_map_data.distToTurn = 0
-      live_map_data.speedAdvisoryValid = 0
+      live_map_data.speedAdvisoryValid = False
       live_map_data.speedAdvisory = 0
       live_map_data.wayId = 0
       live_map_data.speedLimitAhead = op_params.get('lane_offset')
