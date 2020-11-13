@@ -17,6 +17,7 @@ import datetime
 import json
 from common.op_params import opParams
 import sys
+import subprocess
 
 IP_LIST = ['192.168.43.254', '192.168.43.1', '192.168.3.9', '192.168.3.10', '192.168.137.254', '192.168.137.49','192.168.137.100'] #'192.168.43.138',
 OP_SIM = '/tmp/op_simulation'
@@ -49,7 +50,6 @@ op_params = None
 # }
 
 def ping(ip):
-    import subprocess
     status,result = subprocess.getstatusoutput("ping -c1 -W1 " + str(ip))
     return status
 
@@ -190,6 +190,14 @@ def clear_params(op_params):
     else:
       params.put("LastUpdateTime", t.encode('utf8'))
       #op_params.put('camera_offset', 0.06)
+
+def check_git():
+    cur_git_hash = subprocess.check_output('git log -n 1 --pretty=format:%h', shell=True)
+    os.system('git pull')
+    next_git_hash = subprocess.check_output('git log -n 1 --pretty=format:%h', shell=True)
+
+    if cur_git_hash != next_git_hash:
+      os.system('reboot')
 
 def main():
 
