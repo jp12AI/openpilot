@@ -62,7 +62,11 @@ def main():
     if speed < 0.00001:
       speed = posenet_speed
     #can_function(pm, speed, steer_angle, rk.frame, rk.frame%500 == 499)
-    can_function(pm, speed * 3.6, steer_angle, rk.frame, cruise_button=0, is_engaged=1)
+
+    btn = 0
+    if os.path.exists('/tmp/op_start'):
+      btn = 3
+    can_function(pm, speed * 3.6, steer_angle, rk.frame, cruise_button=btn, is_engaged=1)
     #if rk.frame%5 == 0:
     #  throttle, brake, steer = sendcan_function(sendcan)
     #  steer_angle += steer/10000.0 # torque
