@@ -243,27 +243,28 @@ class Controls:
       self.events.add(EventName.commIssue)
 
       # golden patched
-      if self.log_frame % 100 == 0:
-        log_text = 'not_valid:\n'
-        service_list = self.sm.valid.keys()
-        for s in service_list:
-          if not self.sm.valid[s]:
-            log_text += str(s)
-            log_text += '\n'
-
-        log_text += 'not_alive:\n'
-        service_list = self.sm.alive.keys()
-        for s in service_list:
-          if not self.sm.alive[s]:
-            if s not in self.sm.ignore_alive:
+      if self.state == State.enabled:
+        if self.log_frame % 100 == 0:
+          log_text = 'not_valid:\n'
+          service_list = self.sm.valid.keys()
+          for s in service_list:
+            if not self.sm.valid[s]:
               log_text += str(s)
               log_text += '\n'
 
-        text_file = open("/tmp/comm_issue.txt", "wt")
-        text_file.write(log_text)
-        text_file.close()
+          log_text += 'not_alive:\n'
+          service_list = self.sm.alive.keys()
+          for s in service_list:
+            if not self.sm.alive[s]:
+              if s not in self.sm.ignore_alive:
+                log_text += str(s)
+                log_text += '\n'
 
-      self.log_frame += 1
+          text_file = open('/tmp/comm_issue_' + str(self.log_frame) + '.txt', "wt")
+          text_file.write(log_text)
+          text_file.close()
+
+        self.log_frame += 1
 
 
     if not self.sm['pathPlan'].mpcSolutionValid:
