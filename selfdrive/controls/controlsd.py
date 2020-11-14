@@ -243,7 +243,7 @@ class Controls:
       self.events.add(EventName.commIssue)
 
       # golden patched
-      if self.state == State.enabled:
+      if self.enabled:
         if self.log_frame % 100 == 0:
           log_text = 'not_valid:\n'
           service_list = self.sm.valid.keys()
