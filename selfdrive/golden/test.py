@@ -29,17 +29,17 @@ def main():
         sm.update()
 
         log_text = 'not_valid:\n'
-        service_list = self.sm.valid.keys()
+        service_list = sm.valid.keys()
         for s in service_list:
-          if not self.sm.valid[s]:
+          if not sm.valid[s]:
             log_text += str(s)
             log_text += '\n'
 
         log_text += 'not_alive:\n'
-        service_list = self.sm.alive.keys()
+        service_list = sm.alive.keys()
         for s in service_list:
-          if not self.sm.alive[s]:
-            if s not in self.ignore_alive:
+          if not sm.alive[s]:
+            if s not in sm.ignore_alive:
               log_text += str(s)
               log_text += '\n'
 
