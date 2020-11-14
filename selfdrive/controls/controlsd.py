@@ -242,12 +242,8 @@ class Controls:
     elif not self.sm.all_alive_and_valid():
       self.events.add(EventName.commIssue)
 
-      print ("self.enabled=", self.enabled)
-
       # golden patched
       if self.enabled:
-
-        print ('FUCK !!!')
 
         if self.log_frame % 100 == 0:
           log_text = 'not_valid:\n'
