@@ -76,7 +76,7 @@ def main():
           btn_list.append(2)
       os.system('rm /tmp/op_stop')
 
-    btn =
+    btn = 0
     if len(btn_list) > 0:
       btn = btn_list[0]
       btn_list.pop(0)
