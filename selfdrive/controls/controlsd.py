@@ -255,7 +255,7 @@ class Controls:
         service_list = self.sm.alive.keys()
         for s in service_list:
           if not self.sm.alive[s]:
-            if if s not in self.ignore_alive:
+            if s not in self.ignore_alive:
               log_text += str(s)
               log_text += '\n'
 
