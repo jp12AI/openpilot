@@ -37,6 +37,7 @@ def main():
   gps_speed = 30.0 / 3.6
   cal_status = 0
   posenet_speed = 0.0
+  btn_list = []
 
   while 1:
     gps_data = messaging.recv_sock(gps)
@@ -63,9 +64,23 @@ def main():
       speed = posenet_speed
     #can_function(pm, speed, steer_angle, rk.frame, rk.frame%500 == 499)
 
-    btn = 0
     if os.path.exists('/tmp/op_start'):
-      btn = 3
+      if len(btn_list) == 0:
+        for x in range(5):
+          btn_list.append(3)
+        os.system('rm /tmp/op_start')
+
+    if os.path.exists('/tmp/op_stop'):
+      if len(btn_list) == 0:
+        for x in range(5):
+          btn_list.append(2)
+      os.system('rm /tmp/op_stop')
+
+    btn =
+    if len(btn_list) > 0:
+      btn = btn_list[0]
+      btn_list.pop(0)
+
     can_function(pm, speed * 3.6, steer_angle, rk.frame, cruise_button=btn, is_engaged=1)
     #if rk.frame%5 == 0:
     #  throttle, brake, steer = sendcan_function(sendcan)
