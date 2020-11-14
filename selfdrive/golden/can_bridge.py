@@ -66,13 +66,13 @@ def main():
 
     if os.path.exists('/tmp/op_start'):
       if len(btn_list) == 0:
-        for x in range(5):
+        for x in range(10):
           btn_list.append(3)
         os.system('rm /tmp/op_start')
 
     if os.path.exists('/tmp/op_stop'):
       if len(btn_list) == 0:
-        for x in range(5):
+        for x in range(10):
           btn_list.append(2)
       os.system('rm /tmp/op_stop')
 
