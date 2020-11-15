@@ -11,6 +11,7 @@ from opendbc.can.parser import CANParser
 import json
 from common.realtime import Ratekeeper
 import platform
+from common.op_params import opParams
 
 BASE_PATH='/data/openpilot/selfdrive/'
 SOUND_PATH=BASE_PATH + 'golden/sounds/'
@@ -37,18 +38,24 @@ def sound_logic_thread():
     sm = messaging.SubMaster(['carState'])
     rk = Ratekeeper(1.0, print_delay_threshold=None)
     play_time = 0
+    last_lane_offset = 0.0
+    op_params = opParams()
 
     play_sound('init_alert.wav', 0, 0)
 
     while True:
-        try:
-            sm.update()
-            pass
+      try:
+          sm.update()
 
-        except messaging_pyx.MessagingError:
-            print('MessagingError error happens')
+      except messaging_pyx.MessagingError:
+          print('MessagingError error happens')
 
-    rk.keep_time()
+      cur_lane_offset = op_params.get('lane_offset')
+      if cur_lane_offset != last_lane_offset:
+        play_time = play_sound('lane_offset_changed.wav', play_time, 3)
+        last_lane_offset = cur_lane_offset
+
+      rk.keep_time()
 
 def main():
   sound_logic_thread()
