@@ -257,7 +257,7 @@ def main():
 
     if not git_fetched:
       cur_sec = sec_since_boot()
-      if (cur_sec - start_sec) >= 15:
+      if (cur_sec - start_sec) >= 10:
         print ('*************************************** try to git fetch ***************************************')
         git_fetched = True
         cur_git_hash = subprocess.check_output('git log -n 1 --pretty=format:%h', shell=True)
