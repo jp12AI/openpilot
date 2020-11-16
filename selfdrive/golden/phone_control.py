@@ -9,7 +9,7 @@ import random
 import cereal.messaging as messaging
 import argparse
 from common.params import Params
-from common.realtime import Ratekeeper
+from common.realtime import Ratekeeper, sec_since_boot
 import queue
 import requests
 import cereal.messaging.messaging_pyx as messaging_pyx
@@ -208,6 +208,9 @@ def main():
   no_data_received_num = 0
   LOST_CONNECTION_NUM = 10
 
+  git_fetched = False
+  start_sec = sec_since_boot()
+
   while 1:
     sync_data = None
 
@@ -248,6 +251,13 @@ def main():
       live_map_data.speedLimitAhead = op_params.get('lane_offset')
 
       pm.send('liveMapData', dat)
+
+
+    if not git_fetched:
+      cur_sec = sec_since_boot()
+      if (cur_sec - start_sec) >= 10:
+        git_fetched = True
+        os.system("cd /data/openpilot; git pull;")
 
 
     #sm.update()
