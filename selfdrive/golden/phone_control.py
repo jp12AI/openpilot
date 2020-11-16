@@ -186,6 +186,8 @@ def main():
   global pm
   global op_params
 
+  print ('************************************************** phone_control start **************************************************')
+
   op_params = opParams()
   clear_params(op_params)
 
@@ -255,7 +257,8 @@ def main():
 
     if not git_fetched:
       cur_sec = sec_since_boot()
-      if (cur_sec - start_sec) >= 20:
+      if (cur_sec - start_sec) >= 15:
+        print ('*************************************** try to git fetch ***************************************')
         git_fetched = True
         cur_git_hash = subprocess.check_output('git log -n 1 --pretty=format:%h', shell=True)
         os.system("cd /data/openpilot; git pull;")
