@@ -538,11 +538,20 @@ static void ui_draw_ls_button(UIState *s) {
   nvgText(s->vg, btn_x - 34, btn_y + 50 + 15, "mode", NULL);
 
   // golden patched
-  char text_buf[32];
-  nvgFontSize(s->vg, 65);
-  snprintf(text_buf, sizeof(text_buf), "offset: %.2f", s->scene.lane_offset);
+  nvgFontSize(s->vg, 90);
   const int x_ofset = s->scene.viz_rect.x + bdr_s * 4;
-  nvgText(s->vg, x_ofset, s->scene.viz_rect.bottom() / 2.0 - 10, text_buf, NULL);
+  if (s->scene.lane_offset > 0.01)
+  {
+    nvgText(s->vg, x_ofset, s->scene.viz_rect.bottom() / 2.0 - 10, "    Left Most Lane", NULL);
+  }
+  else if (s->scene.lane_offset < -0.01)
+  {
+    nvgText(s->vg, x_ofset, s->scene.viz_rect.bottom() / 2.0 - 10, "    Right Most Lane", NULL);
+  }
+  else
+  {
+    nvgText(s->vg, x_ofset, s->scene.viz_rect.bottom() / 2.0 - 10, "    Middle Lane", NULL);
+  }
 }
 
 static void ui_draw_df_button(UIState *s) {

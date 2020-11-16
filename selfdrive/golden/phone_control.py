@@ -21,15 +21,13 @@ import subprocess
 
 IP_LIST = ['192.168.43.254', '192.168.43.1', '192.168.3.9', '192.168.3.10', '192.168.137.254', '192.168.137.49','192.168.137.100'] #'192.168.43.138',
 OP_SIM = '/tmp/op_simulation'
-MAX_LANE_OFFSET = 1.0
 TIME_OUT=1000
 
 last_debug_mode = 0
-last_lane_offset = 0
 pm = None
 op_params = None
 
-# struct LiveMapData {
+# struct LiveMapData
 #   speedLimitValid @0 :Bool;
 #   speedLimit @1 :Float32;
 #   speedAdvisoryValid @12 :Bool;
@@ -95,7 +93,6 @@ def process_phone_data(sync_data):
     sync_data_str = sync_data.decode("utf-8")
 
     global last_debug_mode
-    global last_lane_offset
     global pm
     global op_params
 
@@ -108,15 +105,6 @@ def process_phone_data(sync_data):
       remain_dist = parsed_json['remain_dist']
       nav_icon = parsed_json['navi_icon']
       debug_mode = parsed_json['op_debug_mode']
-
-      lane_offset = 0.0
-      if 'lane_offset' in parsed_json:
-        lane_offset = parsed_json['lane_offset']
-
-      if lane_offset > MAX_LANE_OFFSET:
-        lane_offset = MAX_LANE_OFFSET
-      if lane_offset < -MAX_LANE_OFFSET:
-        lane_offset = -MAX_LANE_OFFSET
 
       date_str = ''
       if 'date' in parsed_json:
@@ -133,13 +121,6 @@ def process_phone_data(sync_data):
         else:
           os.system('killall -9 com.android.settings')
         last_debug_mode = debug_mode
-
-      # if last_lane_offset != lane_offset:
-      #   cmd = 'echo ' + str(lane_offset) + ' > /tmp/lane_offset'
-      #   print (cmd)
-      #   os.system(cmd)
-      #   last_lane_offset = lane_offset
-      #   op_params.put('lane_offset', lane_offset)
 
       now = datetime.datetime.now()
       if now.year == 1970:
@@ -163,7 +144,7 @@ def process_phone_data(sync_data):
       live_map_data.speedAdvisoryValid = has_exit
       live_map_data.speedAdvisory = remain_dist
       live_map_data.wayId = nav_icon
-      live_map_data.speedLimitAhead = lane_offset
+      live_map_data.speedLimitAhead = op_params.get('lane_offset')
 
       pm.send('liveMapData', dat)
 
@@ -202,7 +183,6 @@ def check_git():
 def main():
 
   global last_debug_mode
-  global last_lane_offset
   global pm
   global op_params
 
@@ -224,7 +204,6 @@ def main():
   rk = Ratekeeper(5.0, print_delay_threshold=None)
   pm = messaging.PubMaster(['liveMapData'])
   last_debug_mode = 0
-  last_lane_offset = 0.0
 
   no_data_received_num = 0
   LOST_CONNECTION_NUM = 10

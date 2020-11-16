@@ -317,9 +317,7 @@ class LaneSpeed:
   # golden patch
   def update_ego_lane_position(self):
 
-    enabled = self.sm['carState'].cruiseState.enabled
-
-    if self.v_ego > 20.0 / 3.6 and enabled:
+    if self.v_ego > 10.0 / 3.6:
       left_num = len(self.lanes['left'].tracks)
       right_num = len(self.lanes['right'].tracks)
 
