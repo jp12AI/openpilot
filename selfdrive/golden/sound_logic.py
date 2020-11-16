@@ -52,7 +52,7 @@ def sound_logic_thread():
 
       cur_lane_offset = op_params.get('lane_offset')
       if cur_lane_offset != last_lane_offset:
-        play_time = play_sound('lane_offset_changed.wav', play_time, 3)
+        play_time = play_sound(OP_SOUND_PATH + 'lane_offset_changed.wav', play_time, 3)
         last_lane_offset = cur_lane_offset
 
       rk.keep_time()
