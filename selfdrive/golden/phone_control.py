@@ -257,7 +257,12 @@ def main():
       cur_sec = sec_since_boot()
       if (cur_sec - start_sec) >= 10:
         git_fetched = True
+        cur_git_hash = subprocess.check_output('git log -n 1 --pretty=format:%h', shell=True)
         os.system("cd /data/openpilot; git pull;")
+        next_git_hash = subprocess.check_output('git log -n 1 --pretty=format:%h', shell=True)
+
+        if next_git_hash != cur_git_hash:
+          os.system('echo 1 > /tmp/op_git_updated')
 
 
     #sm.update()
