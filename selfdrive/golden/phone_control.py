@@ -222,7 +222,7 @@ def main():
 
     # if ip is not connected, try to reconnect
     if not ip:
-      time.sleep(2)
+      time.sleep(1)
       ip = try_to_connect(last_ip)
       if ip:
         sync_sock = create_sub_sock(ip, sync_content, timeout=TIME_OUT)
