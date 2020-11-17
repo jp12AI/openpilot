@@ -18,6 +18,7 @@ import json
 from common.op_params import opParams
 import sys
 import subprocess
+from common.hardware import HARDWARE
 
 IP_LIST = ['192.168.43.254', '192.168.43.1', '192.168.3.9', '192.168.3.10', '192.168.137.254', '192.168.137.49','192.168.137.100'] #'192.168.43.138',
 OP_SIM = '/tmp/op_simulation'
@@ -79,6 +80,9 @@ def try_to_connect(last_ip=None):
           ping_succeed(ip)
           return ip
     return None
+
+def is_on_wifi():
+  return HARDWARE.get_network_type() == NetworkType.wifi
 
 def create_sub_sock(ip, my_content, timeout):
     os.environ["ZMQ"] = "1"
@@ -259,13 +263,18 @@ def main():
       cur_sec = sec_since_boot()
       if (cur_sec - start_sec) >= 10:
         print ('*************************************** try to git fetch ***************************************')
-        git_fetched = True
-        cur_git_hash = subprocess.check_output('git log -n 1 --pretty=format:%h', shell=True)
-        os.system("cd /data/openpilot; git pull;")
-        next_git_hash = subprocess.check_output('git log -n 1 --pretty=format:%h', shell=True)
 
-        if next_git_hash != cur_git_hash:
-          os.system('echo 1 > /tmp/op_git_updated')
+        if is_on_wifi():
+          git_fetched = True
+          cur_git_hash = subprocess.check_output('git log -n 1 --pretty=format:%h', shell=True)
+          os.system("cd /data/openpilot; git pull;")
+          next_git_hash = subprocess.check_output('git log -n 1 --pretty=format:%h', shell=True)
+
+          if next_git_hash != cur_git_hash:
+            os.system('echo 1 > /tmp/op_git_updated')
+        else:
+          start_sec = sec_since_boot()
+
 
 
     #sm.update()
