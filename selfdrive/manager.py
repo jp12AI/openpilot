@@ -115,6 +115,8 @@ if not prebuilt:
       except Exception:
         pass
 
+    print ('scons.returncode=', str(scons.returncode))
+
     if scons.returncode != 0:
       # Read remaining output
       r = scons.stderr.read().split(b'\n')   # type: ignore
