@@ -11,9 +11,6 @@ try:
 except:
   pass
 
-#golden
-import os
-
 # try:
 #   from common.realtime import sec_since_boot
 # except ImportError:
