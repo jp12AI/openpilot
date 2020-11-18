@@ -272,7 +272,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
   EventName.debugAlert: {
     ET.PERMANENT: Alert(
       "Git updated",
-      "",
+      "Reboot your device",
       AlertStatus.normal, AlertSize.full,
       Priority.LOW, VisualAlert.none, AudibleAlert.none, 2, 2, 2),
   },

@@ -348,6 +348,7 @@ def prepare_managed_process(p):
     # import this python
     cloudlog.info("preimporting %s" % proc)
     importlib.import_module(proc)
+    print('preimport end')
   elif os.path.isfile(os.path.join(BASEDIR, proc[0], "Makefile")):
     # build this process
     cloudlog.info("building %s" % (proc,))
