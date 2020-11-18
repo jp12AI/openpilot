@@ -827,4 +827,11 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
     ET.NO_ENTRY: NoEntryAlert("Cruise Fault: Restart the Car"),
   },
 
+  # golden
+  EventName.gitUpdated: {
+    ET.PERMANENT: NormalPermanentAlert("Git Updated", "Source Code updated, please reboot"),
+    ET.NO_ENTRY: NoEntryAlert("Git Updated",
+                              audible_alert=AudibleAlert.chimeDisengage),
+  },
+
 }
