@@ -268,12 +268,13 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
       Priority.LOW, VisualAlert.none, AudibleAlert.none, .2, 0., .1),
   },
 
+  # golden patched
   EventName.debugAlert: {
     ET.PERMANENT: Alert(
-      "DEBUG ALERT",
+      "Git updated",
       "",
-      AlertStatus.userPrompt, AlertSize.mid,
-      Priority.LOW, VisualAlert.none, AudibleAlert.none, .1, .1, .1),
+      AlertStatus.normal, AlertSize.full,
+      Priority.LOW, VisualAlert.none, AudibleAlert.none, 2, 2, 2),
   },
 
   EventName.startup: {
@@ -825,13 +826,6 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
       AlertStatus.normal, AlertSize.small,
       Priority.LOWER, VisualAlert.none, AudibleAlert.none, 0., 0., .2),
     ET.NO_ENTRY: NoEntryAlert("Cruise Fault: Restart the Car"),
-  },
-
-  # golden
-  EventName.gitUpdated: {
-    ET.PERMANENT: NormalPermanentAlert("Git Updated", "Source Code updated, please reboot"),
-    ET.NO_ENTRY: NoEntryAlert("Git Updated",
-                              audible_alert=AudibleAlert.chimeDisengage),
   },
 
 }

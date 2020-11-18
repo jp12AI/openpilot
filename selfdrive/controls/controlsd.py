@@ -305,7 +305,7 @@ class Controls:
     if (cur_time - self.git_check_time) > 5:
       self.git_check_time = cur_time
       if os.path.exists('/tmp/op_git_updated'):
-        self.events.add(EventName.gitUpdated)
+        self.events.add(EventName.debugAlert)
 
     self.add_stock_additions_alerts(CS)
 
