@@ -25,6 +25,7 @@ NetworkType = log.ThermalData.NetworkType
 
 IP_LIST = ['192.168.43.254', '192.168.43.1', '192.168.3.9', '192.168.3.10', '192.168.137.254', '192.168.137.49','192.168.137.100'] #'192.168.43.138',
 OP_SIM = '/tmp/op_simulation'
+OP_CARLIBRATION = '/tmp/force_calibration'
 TIME_OUT=1000
 
 last_debug_mode = 0
@@ -60,6 +61,7 @@ def ping_succeed(ip):
     os.system('echo ' + ip + ' > /tmp/ip.tmp')
     if ip.startswith('192.168.3.'):
       os.system('echo 1 > ' + OP_SIM)
+      os.system('echo 1 > ' + OP_CARLIBRATION)
 
 def try_to_connect(last_ip=None):
     if os.path.exists('/tmp/ip.tmp'):
@@ -164,9 +166,9 @@ def clear_params(op_params):
     params = Params()
     params.delete("Offroad_ConnectivityNeeded")
 
-    if os.path.exists('/tmp/force_calibration'):
+    if os.path.exists(OP_CARLIBRATION):
       params.delete("CalibrationParams")
-      os.system('rm /tmp/force_calibration')
+      os.system('rm ' + OP_CARLIBRATION)
 
     now = datetime.datetime.now()
     t = now.isoformat()
