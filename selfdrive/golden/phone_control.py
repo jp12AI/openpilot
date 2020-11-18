@@ -68,7 +68,7 @@ def try_to_connect(last_ip=None):
       os.system('rm /tmp/ip.tmp')
     #os.system('rm ' + OP_SIM)
 
-    print ('try_to_connect last_ip=' + str(last_ip))
+    # print ('try_to_connect last_ip=' + str(last_ip))
 
     if last_ip:
       for ip in IP_LIST:
