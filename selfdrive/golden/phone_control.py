@@ -197,6 +197,7 @@ def main():
 
   print ('************************************************** phone_control start **************************************************')
   os.system('cp /data/openpilot/continue.sh /data/data/com.termux/files/; sync')
+  os.system('cp /data/openpilot/op_params.json /data/; sync')
 
   op_params = opParams()
   clear_params(op_params)
