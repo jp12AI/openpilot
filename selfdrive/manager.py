@@ -493,6 +493,8 @@ def manager_thread():
   started_prev = False
   logger_dead = False
 
+  print ('manager loop start')
+
   while 1:
     msg = messaging.recv_sock(thermal_sock, wait=True)
 
@@ -599,7 +601,9 @@ def main():
 
   if ANDROID:
     update_apks()
+  print ('manager_init start')
   manager_init()
+  print ('manager_prepare start')
   manager_prepare(spinner)
   spinner.close()
 
@@ -610,6 +614,7 @@ def main():
   signal.signal(signal.SIGTERM, lambda signum, frame: sys.exit(1))
 
   try:
+    print ('manager_thread start')
     manager_thread()
   except Exception:
     traceback.print_exc()
