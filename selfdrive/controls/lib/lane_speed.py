@@ -334,8 +334,8 @@ class LaneSpeed:
       if right_num > 0 and left_num == 0:
         ego_lane_position = 'left'
 
-      if left_on_comming_num > 0:
-        ego_lane_position = 'left'
+      # if left_on_comming_num > 0:
+      #   ego_lane_position = 'left'
 
       #if right_on_comming_num > 0:
       #  ego_lane_positon = 'right'

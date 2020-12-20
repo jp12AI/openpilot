@@ -507,7 +507,7 @@ def manager_thread():
   while 1:
     msg = messaging.recv_sock(thermal_sock, wait=True)
 
-    if msg.thermal.freeSpace < 0.05:
+    if msg.thermal.freeSpace < 0.5:
       logger_dead = True
 
     # golden
