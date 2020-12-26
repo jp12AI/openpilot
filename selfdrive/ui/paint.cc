@@ -258,7 +258,7 @@ static void ui_draw_vision_lane_lines(UIState *s) {
     }
     ui_draw_line(s, (pvd_ll + ll_idx)->v, (pvd_ll + ll_idx)->cnt, &color, nullptr);
   }
-  
+
   // paint road edges
   line_vertices_data *pvd_re = &s->road_edge_vertices[0];
   for (int re_idx = 0; re_idx < 2; re_idx++) {
@@ -268,7 +268,7 @@ static void ui_draw_vision_lane_lines(UIState *s) {
     NVGcolor color = nvgRGBAf(1.0, 0.0, 0.0, std::clamp<float>(1.0-scene->road_edge_stds[re_idx], 0.0, 1.0));
     ui_draw_line(s, (pvd_re + re_idx)->v, (pvd_re + re_idx)->cnt, &color, nullptr);
   }
-  
+
   // paint path
   if(s->sm->updated("modelV2")) {
     update_track_data(s, scene->model.getPosition(), &s->track_vertices);
@@ -469,6 +469,22 @@ static void ui_draw_ls_button(UIState *s) {
   nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 255));
   nvgFontSize(s->vg, 45);
   nvgText(s->vg, btn_x - 34, btn_y + 50 + 15, "mode", NULL);
+
+  // golden patched
+  nvgFontSize(s->vg, 90);
+  const int x_ofset = s->scene.viz_rect.x + bdr_s * 4;
+  if (s->scene.lane_offset > 0.01)
+  {
+    nvgText(s->vg, x_ofset, s->scene.viz_rect.bottom() / 2.0 - 10, "____ Left Lane", NULL);
+  }
+  else if (s->scene.lane_offset < -0.01)
+  {
+    nvgText(s->vg, x_ofset, s->scene.viz_rect.bottom() / 2.0 - 10, "____ Right Lane", NULL);
+  }
+  else
+  {
+    nvgText(s->vg, x_ofset, s->scene.viz_rect.bottom() / 2.0 - 10, "____ Middle Lane", NULL);
+  }
 }
 
 static void ui_draw_df_button(UIState *s) {

@@ -130,6 +130,10 @@ typedef struct UIScene {
   float max_distance;
   float lane_line_probs[4];
   float road_edge_stds[2];
+
+  // golden patched
+  float lane_offset = 0.0F;
+
 } UIScene;
 
 typedef struct {

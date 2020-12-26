@@ -268,12 +268,13 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
       Priority.LOW, VisualAlert.none, AudibleAlert.none, .2, 0., .1),
   },
 
+  # golden patched
   EventName.debugAlert: {
     ET.PERMANENT: Alert(
-      "DEBUG ALERT",
-      "",
-      AlertStatus.userPrompt, AlertSize.mid,
-      Priority.LOW, VisualAlert.none, AudibleAlert.none, .1, .1, .1),
+      "Git updated",
+      "Reboot your device",
+      AlertStatus.normal, AlertSize.full,
+      Priority.LOW, VisualAlert.none, AudibleAlert.none, 2, 2, 2),
   },
 
   EventName.startup: {

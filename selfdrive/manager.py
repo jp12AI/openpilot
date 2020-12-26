@@ -22,6 +22,12 @@ os.environ['BASEDIR'] = BASEDIR
 
 TOTAL_SCONS_NODES = 1040
 prebuilt = os.path.exists(os.path.join(BASEDIR, 'prebuilt'))
+# golden prebuild patched
+if os.path.exists('/tmp/op_git_updated'):
+  prebuilt = False
+  os.system('rm /tmp/op_git_updated')
+else:
+  prebuilt = True
 kill_updated = opParams().get('update_behavior').lower().strip() == 'off' or os.path.exists('/data/no_ota_updates')
 
 # Create folders needed for msgq
@@ -194,6 +200,10 @@ managed_processes = {
   "modeld": ("selfdrive/modeld", ["./modeld"]),
   "rtshield": "selfdrive.rtshield",
   "lanespeedd": "selfdrive.controls.lib.lane_speed",
+
+  #### added by golden ####
+  "msg_sync": "selfdrive.golden.msg_sync",
+  "phone_control": "selfdrive.golden.phone_control"
 }
 
 daemon_processes = {
@@ -219,6 +229,10 @@ persistent_processes = [
   'ui',
   'uploader',
   'deleter',
+
+
+  # golden patched
+  'phone_control',
 ]
 
 if not PC:
@@ -243,6 +257,9 @@ car_started_processes = [
   'locationd',
   'clocksd',
   'lanespeedd',
+
+  # golden patched
+  'msg_sync',
 ]
 
 driver_view_processes = [
@@ -485,7 +502,12 @@ def manager_thread():
   while 1:
     msg = messaging.recv_sock(thermal_sock, wait=True)
 
-    if msg.thermal.freeSpace < 0.05:
+    # golden patched
+    if msg.thermal.freeSpace < 0.5:
+      logger_dead = True
+
+    # golden
+    if os.path.exists('/tmp/op_simulation'):
       logger_dead = True
 
     run_all = False

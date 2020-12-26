@@ -78,6 +78,9 @@ class Controls:
     self.support_white_panda = self.op_params.get('support_white_panda')
     self.last_model_long = False
 
+    # golden patched
+    self.git_check_time = sec_since_boot()
+
     self.can_sock = can_sock
     if can_sock is None:
       can_timeout = None if os.environ.get('NO_CAN_TIMEOUT', False) else 100
@@ -270,6 +273,13 @@ class Controls:
     if CS.brakePressed and self.sm['plan'].vTargetFuture >= STARTING_TARGET_SPEED \
       and self.CP.openpilotLongitudinalControl and CS.vEgo < 0.3:
       self.events.add(EventName.noTarget)
+
+    # golden
+    cur_time = sec_since_boot()
+    if (cur_time - self.git_check_time) > 5:
+      self.git_check_time = cur_time
+      if os.path.exists('/tmp/op_git_updated'):
+        self.events.add(EventName.debugAlert)
 
     self.add_stock_additions_alerts(CS)
 
