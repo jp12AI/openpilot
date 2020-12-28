@@ -14,7 +14,9 @@ import math
 def msg_sync_thread():
 
   #start_sec = round(time.time())
-  sync_topics = ['model', 'liveCalibration', 'pathPlan', 'carState', 'gpsLocationExternal', 'liveTracks'] # 'dMonitoringState', 'gpsLocation', , 'radarState'
+  sync_topics = ['modelV2', 'liveCalibration', 'pathPlan', 'carState', 'gpsLocationExternal', 'liveTracks']
+  # dMonitoringState', 'gpsLocation', 'radarState', 'model'
+
   frame_counts = [0, 0, 0, 0, 0, 0]
   SLEEP_TIME = 0.01
   frame_limits = [0, 2, 0, 0, 0, 0]
