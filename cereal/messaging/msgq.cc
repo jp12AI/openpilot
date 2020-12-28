@@ -232,7 +232,7 @@ void msgq_init_subscriber(msgq_queue_t * q) {
 int msgq_msg_send(msgq_msg_t * msg, msgq_queue_t *q){
   // Die if we are no longer the active publisher
   if (q->write_uid_local != *q->write_uid){
-    std::cout << "Killing old publisher: " << q->endpoint << std::endl;
+    // std::cout << "Killing old publisher: " << q->endpoint << std::endl;
     errno = EADDRINUSE;
     return -1;
   }
