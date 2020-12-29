@@ -3,7 +3,7 @@ from math import atan2, sqrt
 from common.realtime import DT_DMON
 from common.filter_simple import FirstOrderFilter
 from common.stat_live import RunningStatFilter
-from common.is_shane import is_shane
+from common.is_shane import is_shane, is_golden
 
 from cereal import car
 
@@ -18,7 +18,7 @@ EventName = car.CarEvent.EventName
 _AWARENESS_TIME = 35. if not is_shane else 70.  # passive wheel touch total timeout (35 seconds for everyone!)
 _AWARENESS_PRE_TIME_TILL_TERMINAL = 12.
 _AWARENESS_PROMPT_TIME_TILL_TERMINAL = 6.
-_DISTRACTED_TIME = 11.
+_DISTRACTED_TIME = 11. if not is_golden else 30
 _DISTRACTED_PRE_TIME_TILL_TERMINAL = 8.
 _DISTRACTED_PROMPT_TIME_TILL_TERMINAL = 6.
 
