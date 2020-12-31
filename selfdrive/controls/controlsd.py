@@ -80,6 +80,7 @@ class Controls:
 
     # golden patched
     self.git_check_time = sec_since_boot()
+    self.git_alert_times = 10
 
     self.can_sock = can_sock
     if can_sock is None:
@@ -275,11 +276,13 @@ class Controls:
       self.events.add(EventName.noTarget)
 
     # golden
-    cur_time = sec_since_boot()
-    if (cur_time - self.git_check_time) > 5:
-      self.git_check_time = cur_time
-      if os.path.exists('/tmp/op_git_updated'):
-        self.events.add(EventName.debugAlert)
+    if self.git_alert_times >= 0:
+      cur_time = sec_since_boot()
+      if (cur_time - self.git_check_time) > 5:
+        self.git_check_time = cur_time
+        if os.path.exists('/tmp/op_git_updated'):
+          self.git_alert_times -= 1
+          self.events.add(EventName.debugAlert)
 
     self.add_stock_additions_alerts(CS)
 

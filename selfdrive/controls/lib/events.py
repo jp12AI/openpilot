@@ -274,7 +274,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
       "Git updated",
       "Reboot your device",
       AlertStatus.normal, AlertSize.full,
-      Priority.LOW, VisualAlert.none, AudibleAlert.none, 2, 2, 2),
+      Priority.LOW, VisualAlert.none, AudibleAlert.chimeWarning1, 2, 2, 2),
   },
 
   EventName.startup: {
