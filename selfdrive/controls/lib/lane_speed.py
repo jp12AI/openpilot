@@ -72,7 +72,7 @@ class LaneSpeed:
     self._setup()
 
     # golden patch
-    self._ego_lane = 'middle'
+    self._ego_lane = 0
     self._ego_lane_change_wait_frames = 0
     self._lane_offset = 0.0
     self._frames = 0
@@ -314,6 +314,10 @@ class LaneSpeed:
   # golden patch
   def update_ego_lane_position(self):
 
+    LEFT_LANE = -1
+    MID_LANE = 0
+    RIGHT_LANE = 1
+
     if self.v_ego > 10.0 / 3.6:
       left_num = len(self.lanes['left'].tracks)
       right_num = len(self.lanes['right'].tracks)
@@ -323,10 +327,6 @@ class LaneSpeed:
 
       #print ('left:', left_num, ' vs right:', right_num)
       #print ('left_on_comming_num:', left_on_comming_num, ' vs right_on_comming_num:', right_on_comming_num)
-
-      LEFT_LANE = -1
-      MID_LANE = 0
-      RIGHT_LANE = 1
 
       ego_lane_position = MID_LANE
       if left_num > 0 and right_num > 0:
