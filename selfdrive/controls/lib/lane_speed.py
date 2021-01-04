@@ -324,22 +324,19 @@ class LaneSpeed:
       #print ('left:', left_num, ' vs right:', right_num)
       #print ('left_on_comming_num:', left_on_comming_num, ' vs right_on_comming_num:', right_on_comming_num)
 
-      ego_lane_position = 'middle'
+      LEFT_LANE = -1
+      MID_LANE = 0
+      RIGHT_LANE = 1
+
+      ego_lane_position = MID_LANE
       if left_num > 0 and right_num > 0:
-        ego_lane_position = 'middle'
+        ego_lane_position = MID_LANE
 
       if left_num > 0 and right_num == 0:
-        ego_lane_position = 'right'
+        ego_lane_position = RIGHT_LANE
 
       if right_num > 0 and left_num == 0:
-        ego_lane_position = 'left'
-
-      # if left_on_comming_num > 0:
-      #   ego_lane_position = 'left'
-
-      #if right_on_comming_num > 0:
-      #  ego_lane_positon = 'right'
-      #print (ego_lane_positon)
+        ego_lane_position = LEFT_LANE
 
       if ego_lane_position != self._ego_lane:
         #print ('left:', left_num, ' vs right:', right_num)
@@ -347,9 +344,9 @@ class LaneSpeed:
 
         self._ego_lane_change_wait_frames += 1
         if self._ego_lane_change_wait_frames >= 10:
-          if self._ego_lane != 'middle':
+          if self._ego_lane != MID_LANE:
             # you can change directly from left to right
-            self._ego_lane = 'middle'
+            self._ego_lane = MID_LANE
           else:
             self._ego_lane = ego_lane_position
           print (self._ego_lane)
@@ -357,12 +354,12 @@ class LaneSpeed:
       else:
         self._ego_lane_change_wait_frames = 0
     else:
-      self._ego_lane = 'middle'
+      self._ego_lane = MID_LANE
 
     offset = 0.0
-    if self._ego_lane == 'left':
+    if self._ego_lane == LEFT_LANE:
       offset = 0.2
-    elif self._ego_lane == 'right':
+    elif self._ego_lane == RIGHT_LANE:
       offset = -0.2
 
     if self._lane_offset != offset:

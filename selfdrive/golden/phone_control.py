@@ -59,6 +59,7 @@ def ping(ip):
 def ping_succeed(ip):
     print('ping ' + ip + ' successed !')
     os.system('echo ' + ip + ' > /tmp/ip.tmp')
+    # the WIFI ip range of my home ... which means C2 is not in the car ...
     if ip.startswith('192.168.3.'):
       os.system('echo 1 > ' + OP_SIM)
       os.system('echo 1 > ' + OP_CARLIBRATION)
@@ -69,7 +70,7 @@ def try_to_connect(last_ip=None):
     #os.system('rm ' + OP_SIM)
 
     # print ('try_to_connect last_ip=' + str(last_ip))
-
+    # always try to connect to the last connect IP addres first
     if last_ip:
       for ip in IP_LIST:
         if ip != last_ip:
@@ -89,6 +90,8 @@ def try_to_connect(last_ip=None):
 def is_on_wifi():
   return HARDWARE.get_network_type() == NetworkType.wifi
 
+# create subscirbe sock use ZMQ instead internal msgq,
+# the smart phone side will use port testLiveLocation to synconize data
 def create_sub_sock(ip, my_content, timeout):
     os.environ["ZMQ"] = "1"
     sync_sock = messaging_pyx.SubSocket()
@@ -115,15 +118,8 @@ def process_phone_data(sync_data):
       nav_icon = parsed_json['navi_icon']
       debug_mode = parsed_json['op_debug_mode']
 
-      date_str = ''
-      if 'date' in parsed_json:
-        date_str = parsed_json['date']
-
-      cmd_line = ''
-      if 'cmd_line' in parsed_json:
-        cmd_line = parsed_json['cmd_line']
-        #print('cmd_line=', cmd_line)
-
+      # sometimes the datetime in C2 is not correct (1970),
+      # we can use phone to open android setting and disable & enable time sync to solve it
       if last_debug_mode != debug_mode:
         if debug_mode == 1:
           os.system('am start -a android.settings.SETTINGS')
@@ -131,6 +127,11 @@ def process_phone_data(sync_data):
           os.system('killall -9 com.android.settings')
         last_debug_mode = debug_mode
 
+      date_str = ''
+      if 'date' in parsed_json:
+        date_str = parsed_json['date']
+
+      # to record the date time issue and correct it with the datetime from phone
       now = datetime.datetime.now()
       if now.year == 1970:
         cmd = 'date -s \'' + date_str + '\''
@@ -138,10 +139,20 @@ def process_phone_data(sync_data):
         os.system('echo ' + date_str + ' > /tmp/op_date')
         os.system(cmd)
 
+      # the phone can run command line
+      # just for testing, a stupid version of SSH
+      cmd_line = ''
+      if 'cmd_line' in parsed_json:
+        cmd_line = parsed_json['cmd_line']
+        #print('cmd_line=', cmd_line)
+
       if cmd_line != '':
         print ('excute: ' + cmd_line)
         os.system(cmd_line)
 
+
+      # navigation message from amap sdk of phone side
+      # TODO for future use
       if nav_icon < 0:
         nav_icon = 0
 
@@ -181,13 +192,9 @@ def clear_params(op_params):
       params.put("LastUpdateTime", t.encode('utf8'))
       #op_params.put('camera_offset', 0.06)
 
-def check_git():
-    cur_git_hash = subprocess.check_output('git log -n 1 --pretty=format:%h', shell=True)
-    os.system('git pull')
-    next_git_hash = subprocess.check_output('git log -n 1 --pretty=format:%h', shell=True)
+def get_git_hash():
+    return subprocess.check_output('git log -n 1 --pretty=format:%h', shell=True)
 
-    if cur_git_hash != next_git_hash:
-      os.system('reboot')
 
 def main():
 
@@ -262,19 +269,21 @@ def main():
       live_map_data.speedAdvisory = 0
       live_map_data.wayId = 0
       live_map_data.speedLimitAhead = op_params.get('lane_offset')
-
       pm.send('liveMapData', dat)
 
-
+    # simple OTA instead of updated
+    # we will just do a git pull once we connected to WIFI
+    # and mark a flag file /tmp/op_git_updated
+    # then controlsd will send out alert accordingly
     if not git_fetched:
       cur_sec = sec_since_boot()
       if (cur_sec - start_sec) >= 10:
         if is_on_wifi():
           print ('*************************************** try to git fetch ***************************************')
           git_fetched = True
-          cur_git_hash = subprocess.check_output('git log -n 1 --pretty=format:%h', shell=True)
+          cur_git_hash = get_git_hash()
           os.system("cd /data/openpilot; git pull;")
-          next_git_hash = subprocess.check_output('git log -n 1 --pretty=format:%h', shell=True)
+          next_git_hash = get_git_hash()
 
           if next_git_hash != cur_git_hash:
             os.system('echo 1 > /tmp/op_git_updated')
