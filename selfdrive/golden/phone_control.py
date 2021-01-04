@@ -23,7 +23,12 @@ from cereal import log
 
 NetworkType = log.ThermalData.NetworkType
 
-IP_LIST = ['192.168.43.254', '192.168.43.1', '192.168.3.9', '192.168.3.10', '192.168.137.254', '192.168.137.49','192.168.137.100'] #'192.168.43.138',
+IP_LIST = ['192.168.43.254',
+           '192.168.43.1',
+           '192.168.3.9',
+           '192.168.3.10',
+           '192.168.137.254',
+           '192.168.5.10'] #'192.168.43.138',
 OP_SIM = '/tmp/op_simulation'
 OP_CARLIBRATION = '/tmp/force_calibration'
 TIME_OUT=1000
