@@ -31,6 +31,7 @@ TIME_OUT=1000
 last_debug_mode = 0
 pm = None
 op_params = None
+lc_dir = 0
 
 # struct LiveMapData
 #   speedLimitValid @0 :Bool;
@@ -107,6 +108,7 @@ def process_phone_data(sync_data):
     global last_debug_mode
     global pm
     global op_params
+    global lc_dir
 
     try:
       parsed_json = json.loads(sync_data_str)
@@ -150,6 +152,15 @@ def process_phone_data(sync_data):
         print ('excute: ' + cmd_line)
         os.system(cmd_line)
 
+      cur_lc_dir = 0
+      if 'lc_dir' in parsed_json:
+        cur_lc_dir = parsed_json['lc_dir']
+
+      send_lc_dir = 0
+      if cur_lc_dir != lc_dir:
+        send_lc_dir = cur_lc_dir
+        lc_dir = cur_lc_dir
+
 
       # navigation message from amap sdk of phone side
       # TODO for future use
@@ -165,6 +176,7 @@ def process_phone_data(sync_data):
       live_map_data.speedAdvisory = remain_dist
       live_map_data.wayId = nav_icon
       live_map_data.speedLimitAhead = op_params.get('lane_offset')
+      live_map_data.speedLimitAheadDistance = float(send_lc_dir)
 
       pm.send('liveMapData', dat)
 
@@ -269,6 +281,7 @@ def main():
       live_map_data.speedAdvisory = 0
       live_map_data.wayId = 0
       live_map_data.speedLimitAhead = op_params.get('lane_offset')
+      live_map_data.speedLimitAheadDistance = 0.0
       pm.send('liveMapData', dat)
 
     # simple OTA instead of updated
