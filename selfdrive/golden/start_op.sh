@@ -1,7 +1,9 @@
 #!/usr/bin/bash
 
 cd /data/openpilot/
-source "/data/openpilot/launch_env.sh"
+./selfdrive/golden/killall.sh
 
-./selfdrive/manager.py
+cd /
+rm -rf /runonce/
+./comma.sh
 
