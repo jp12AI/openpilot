@@ -65,9 +65,12 @@ class Controls:
                                      'carControl', 'carEvents', 'carParams'])
 
     self.sm = sm
+
+    # golden patched
     if self.sm is None:
       self.sm = messaging.SubMaster(['thermal', 'health', 'model', 'liveCalibration', 'frontFrame',
-                                     'dMonitoringState', 'plan', 'pathPlan', 'liveLocationKalman'])
+                                     'dMonitoringState', 'plan', 'pathPlan', 'liveLocationKalman', 'liveMapData'],
+                                     ignore_alive=['liveMapData'])
 
     self.sm_smiskol = messaging.SubMaster(['radarState', 'dynamicFollowData', 'liveTracks', 'dynamicFollowButton',
                                            'laneSpeed', 'dynamicCameraOffset', 'modelLongButton'])

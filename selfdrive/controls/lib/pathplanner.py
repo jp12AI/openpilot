@@ -103,6 +103,11 @@ class PathPlanner():
 
     self.LP.parse_model(sm['model'])
 
+    # golden patched for auto lane change
+    lc_dir = 0
+    if sm.updated['liveMapData']:
+      lc_dir = int(sm['liveMapData'].speedLimitAheadDistance)
+
     # Lane change logic
     one_blinker = sm['carState'].leftBlinker != sm['carState'].rightBlinker
     below_lane_change_speed = v_ego < self.alca_min_speed
@@ -126,6 +131,14 @@ class PathPlanner():
                             (sm['carState'].rightBlindspot and self.lane_change_direction == LaneChangeDirection.right))
 
       lane_change_prob = self.LP.l_lane_change_prob + self.LP.r_lane_change_prob
+
+      # golden patched
+      if lc_dir < 0:
+        self.lane_change_direction = LaneChangeDirection.right
+        self.lane_change_state = LaneChangeState.laneChangeStarting
+      if lc_dir > 0:
+        self.lane_change_direction = LaneChangeDirection.left
+        self.lane_change_state = LaneChangeState.laneChangeStarting
 
       # State transitions
       # off

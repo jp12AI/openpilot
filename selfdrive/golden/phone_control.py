@@ -37,6 +37,7 @@ last_debug_mode = 0
 pm = None
 op_params = None
 lc_dir = 0
+params = Params()
 
 # struct LiveMapData
 #   speedLimitValid @0 :Bool;
@@ -191,8 +192,10 @@ def process_phone_data(sync_data):
       print("Unexpected error:", sys.exc_info())
 
 def clear_params(op_params):
-    params = Params()
+    global params
+
     params.delete("Offroad_ConnectivityNeeded")
+    params.delete("Offroad_ConnectivityNeededPrompt")
 
     if os.path.exists(OP_CARLIBRATION):
       params.delete("CalibrationParams")
