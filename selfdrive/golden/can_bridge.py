@@ -92,7 +92,8 @@ def main():
     dat.health = {
       'ignitionLine': True,
       'hwType': "uno",
-      'controlsAllowed': True
+      'controlsAllowed': True,
+      'safetyModel': "honda"
     }
     pm.send('health', dat)
 
@@ -108,7 +109,8 @@ def signal_handler(sig, frame):
     dat.health = {
       'ignitionLine': False,
       'hwType': "uno",
-      'controlsAllowed': True
+      'controlsAllowed': True,
+      'safetyModel': "honda"
     }
 
     for seq in range(10):
