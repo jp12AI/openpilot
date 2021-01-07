@@ -3,9 +3,6 @@ import numpy as np
 from cereal import log
 from selfdrive.controls.lib.dynamic_camera_offset import DynamicCameraOffset
 
-# golden patched
-from common.op_params import opParams
-
 STANDARD_CAMERA_OFFSET = 0.06  # m from center car to camera (DO NOT CHANGE THIS)
 
 
@@ -49,9 +46,6 @@ class LanePlanner:
     self.x_points = np.arange(50)
     self.dynamic_camera_offset = DynamicCameraOffset()
 
-    # golden patched
-    self.op_params = opParams()
-
   def parse_model(self, md):
     if len(md.leftLane.poly):
       self.l_poly = np.array(md.leftLane.poly)
@@ -73,9 +67,6 @@ class LanePlanner:
   def update_d_poly(self, v_ego, angle_steers, active):
     # only offset left and right lane lines; offsetting p_poly does not make sense
     CAMERA_OFFSET = self.dynamic_camera_offset.update(v_ego, active, angle_steers, self.lane_width, self.lane_width_certainty, [self.l_poly, self.r_poly], [self.l_prob, self.r_prob])
-
-    #golden
-    CAMERA_OFFSET = self.op_params.get('lane_offset') + STANDARD_CAMERA_OFFSET
 
     self.l_poly[3] += CAMERA_OFFSET
     self.r_poly[3] += CAMERA_OFFSET

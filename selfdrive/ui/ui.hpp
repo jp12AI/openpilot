@@ -132,7 +132,7 @@ typedef struct UIScene {
   float road_edge_stds[2];
 
   // golden patched
-  float lane_offset = 0.0F;
+  int ego_lane_position = 0;
 
 } UIScene;
 

@@ -181,7 +181,6 @@ def process_phone_data(sync_data):
       live_map_data.speedAdvisoryValid = has_exit
       live_map_data.speedAdvisory = remain_dist
       live_map_data.wayId = nav_icon
-      live_map_data.speedLimitAhead = op_params.get('lane_offset')
       live_map_data.speedLimitAheadDistance = float(send_lc_dir)
 
       pm.send('liveMapData', dat)
@@ -279,18 +278,6 @@ def main():
 
     if sync_data:
       process_phone_data(sync_data)
-    else:
-      dat = messaging.new_message('liveMapData')
-      dat.valid = True
-      live_map_data = dat.liveMapData
-      live_map_data.speedLimit = 0
-      live_map_data.distToTurn = 0
-      live_map_data.speedAdvisoryValid = False
-      live_map_data.speedAdvisory = 0
-      live_map_data.wayId = 0
-      live_map_data.speedLimitAhead = op_params.get('lane_offset')
-      live_map_data.speedLimitAheadDistance = 0.0
-      pm.send('liveMapData', dat)
 
     # simple OTA instead of updated
     # we will just do a git pull once we connected to WIFI

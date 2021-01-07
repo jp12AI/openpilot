@@ -472,12 +472,13 @@ static void ui_draw_ls_button(UIState *s) {
 
   // golden patched
   nvgFontSize(s->vg, 90);
+  nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 255));
   const int x_ofset = s->scene.viz_rect.x + bdr_s * 4;
-  if (s->scene.lane_offset > 0.01)
+  if (s->scene.ego_lane_position > 0)
   {
     nvgText(s->vg, x_ofset, s->scene.viz_rect.bottom() / 2.0 - 10, "____ Keep Left", NULL);
   }
-  else if (s->scene.lane_offset < -0.01)
+  else if (s->scene.ego_lane_position < 0)
   {
     nvgText(s->vg, x_ofset, s->scene.viz_rect.bottom() / 2.0 - 10, "____ Keep Right", NULL);
   }

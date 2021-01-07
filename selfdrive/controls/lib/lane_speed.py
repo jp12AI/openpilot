@@ -280,6 +280,7 @@ class LaneSpeed:
 
     ls_send.laneSpeed.leftLaneOncoming = self.oncoming_lanes['left']
     ls_send.laneSpeed.rightLaneOncoming = self.oncoming_lanes['right']
+    ls_send.laneSpeed.egoLanePosition = self._ego_lane
 
     if self.last_ls_state != self.ls_state:  # show alert if button tapped and write to opParams
       self.op_params.put('lane_speed_alerts', LaneSpeedState.to_state[self.ls_state])
@@ -314,9 +315,9 @@ class LaneSpeed:
   # golden patch
   def update_ego_lane_position(self):
 
-    LEFT_LANE = -1
+    LEFT_LANE = 1
     MID_LANE = 0
-    RIGHT_LANE = 1
+    RIGHT_LANE = -1
 
     if self.v_ego > 10.0 / 3.6:
       left_num = len(self.lanes['left'].tracks)
@@ -356,15 +357,16 @@ class LaneSpeed:
     else:
       self._ego_lane = MID_LANE
 
-    offset = 0.0
-    if self._ego_lane == LEFT_LANE:
-      offset = 0.2
-    elif self._ego_lane == RIGHT_LANE:
-      offset = -0.2
+      # offset = 0.0
+      # if self._ego_lane == LEFT_LANE:
+      #   offset = 0.2
+      # elif self._ego_lane == RIGHT_LANE:
+      #   offset = -0.2
 
-    if self._lane_offset != offset:
-      self.op_params.put('lane_offset', offset)
-      self._lane_offset = offset
+      # if self._lane_offset != offset:
+      #   self.op_params.put('lane_offset', offset)
+      #   self._lane_offset = offset
+
 
 # class Track:
 #   def __init__(self, vRel, yRel, dRel):

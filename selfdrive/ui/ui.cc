@@ -60,8 +60,8 @@ void sa_init(UIState *s, bool full_init) {
 void ui_init(UIState *s) {
   // golden patched
   s->sm = new SubMaster({"modelV2", "controlsState", "uiLayoutState", "liveCalibration", "radarState", "thermal",
-                         "health", "carParams", "ubloxGnss", "driverState", "dMonitoringState", "sensorEvents", "liveMapData"},
-                         nullptr, {"liveMapData"});
+                         "health", "carParams", "ubloxGnss", "driverState", "dMonitoringState", "sensorEvents", "laneSpeed"},
+                         nullptr, {"laneSpeed"});
 
   s->started = false;
   s->status = STATUS_OFFROAD;
@@ -275,10 +275,8 @@ void update_sockets(UIState *s) {
   s->started = scene.thermal.getStarted() || scene.frontview;
 
   // golden patched
-  if (sm.updated("liveMapData")) {
-    auto live_map_data = sm["liveMapData"].getLiveMapData();
-    auto speedLimitAhead = live_map_data.getSpeedLimitAhead();
-    s->scene.lane_offset = speedLimitAhead;
+  if (sm.updated("laneSpeed")) {
+    s->scene.ego_lane_position = sm["laneSpeed"].getLaneSpeed().getEgoLanePositions();
   }
 }
 

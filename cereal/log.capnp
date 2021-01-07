@@ -2082,6 +2082,8 @@ struct LaneSpeed {
 
   leftLaneOncoming @9 :Bool;
   rightLaneOncoming @10 :Bool;
+
+  egoLanePosition @11 : Int32;
 }
 
 struct LaneSpeedButton {
