@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 cd /data/openpilot/
-./selfdrive/golden/killall.sh
+./selfdrive/golden/kill_all.sh
 
 cd /
 rm -rf /runonce/
