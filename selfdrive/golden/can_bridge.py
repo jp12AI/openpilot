@@ -34,7 +34,7 @@ def main():
   rk = Ratekeeper(100, print_delay_threshold=None)
   steer_angle = 0.0
 
-  gps_speed = 30.0 / 3.6
+  gps_speed = 50.0 / 3.6
   cal_status = 0
   posenet_speed = 0.0
   btn_list = []
@@ -91,7 +91,7 @@ def main():
     dat.valid = True
     dat.health = {
       'ignitionLine': True,
-      'hwType': "greyPanda",
+      'hwType': "uno",
       'controlsAllowed': True
     }
     pm.send('health', dat)
@@ -107,7 +107,7 @@ def signal_handler(sig, frame):
     dat.valid = True
     dat.health = {
       'ignitionLine': False,
-      'hwType': "greyPanda",
+      'hwType': "uno",
       'controlsAllowed': True
     }
 

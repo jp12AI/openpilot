@@ -60,7 +60,7 @@ def can_function(pm, speed, angle, idx, cruise_button=0, is_engaged=False):
   msg.append(packer.make_can_msg("EPB_STATUS", 0, {}, idx))
   msg.append(packer.make_can_msg("DOORS_STATUS", 0, {}, idx))
   msg.append(packer.make_can_msg("CRUISE_PARAMS", 0, {}, idx))
-  msg.append(packer.make_can_msg("CRUISE", 0, {}, idx))
+  msg.append(packer.make_can_msg("CRUISE", 0, {"CRUISE_SPEED_PCM": speed}, idx))
   msg.append(packer.make_can_msg("SCM_FEEDBACK", 0, {"MAIN_ON": 1}, idx))
   msg.append(packer.make_can_msg("POWERTRAIN_DATA", 0, {"ACC_STATUS": int(is_engaged)}, idx))
   #print(msg)
