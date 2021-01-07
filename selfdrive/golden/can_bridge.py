@@ -93,7 +93,7 @@ def main():
       'ignitionLine': True,
       'hwType': "uno",
       'controlsAllowed': True,
-      'safetyModel': "honda"
+      'safetyModel': "hondaNidec"
     }
     pm.send('health', dat)
 
@@ -110,7 +110,7 @@ def signal_handler(sig, frame):
       'ignitionLine': False,
       'hwType': "uno",
       'controlsAllowed': True,
-      'safetyModel': "honda"
+      'safetyModel': "hondaNidec"
     }
 
     for seq in range(10):
