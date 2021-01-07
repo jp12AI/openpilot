@@ -475,15 +475,15 @@ static void ui_draw_ls_button(UIState *s) {
   const int x_ofset = s->scene.viz_rect.x + bdr_s * 4;
   if (s->scene.lane_offset > 0.01)
   {
-    nvgText(s->vg, x_ofset, s->scene.viz_rect.bottom() / 2.0 - 10, "____ Left Lane", NULL);
+    nvgText(s->vg, x_ofset, s->scene.viz_rect.bottom() / 2.0 - 10, "____ Keep Left", NULL);
   }
   else if (s->scene.lane_offset < -0.01)
   {
-    nvgText(s->vg, x_ofset, s->scene.viz_rect.bottom() / 2.0 - 10, "____ Right Lane", NULL);
+    nvgText(s->vg, x_ofset, s->scene.viz_rect.bottom() / 2.0 - 10, "____ Keep Right", NULL);
   }
   else
   {
-    nvgText(s->vg, x_ofset, s->scene.viz_rect.bottom() / 2.0 - 10, "____ Middle Lane", NULL);
+    nvgText(s->vg, x_ofset, s->scene.viz_rect.bottom() / 2.0 - 10, "____ Keep Center", NULL);
   }
 }
 
