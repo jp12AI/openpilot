@@ -15,7 +15,7 @@ Sometimes the car is driving too much "dead center", human driver wont do that
 
 ![pic1](./doc/lateral_offset.png?raw=true)
 
-keep left if you have cars on your right side and you have space on your left
+keep left (0.2m) if you have cars on your right side
 ![keep_left](./doc/keep_left.jpg?raw=true)
 
 keep center is there is no car surrounded
