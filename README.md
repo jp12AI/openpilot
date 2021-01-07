@@ -12,4 +12,11 @@ It will check if the ego car is in the left most lane or right most lane or midd
 if ego is in left most lane, it will adjust the offset 0.2m to the left and vice versa to keep distance away from the big truck.
 Sometimes the car is driving too much "dead center", human driver wont do that
 
+
 ![pic1](./doc/lateral_offset.png?raw=true)
+
+keep left if you have cars on your right side and you have space on your left
+![keep_left](./doc/keep_left.jpg?raw=true)
+
+keep center is there is no car surrounded
+![keep_center](./doc/keep_center.jpg?raw=true)
