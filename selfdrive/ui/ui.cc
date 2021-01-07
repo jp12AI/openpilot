@@ -276,7 +276,7 @@ void update_sockets(UIState *s) {
 
   // golden patched
   if (sm.updated("laneSpeed")) {
-    s->scene.ego_lane_position = sm["laneSpeed"].getLaneSpeed().getEgoLanePositions();
+    s->scene.ego_lane_position = sm["laneSpeed"].getLaneSpeed().getEgoLanePosition();
   }
 }
 
