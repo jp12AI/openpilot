@@ -12,4 +12,4 @@ It will check if the ego car is in the left most lane or right most lane or midd
 if ego is in left most lane, it will adjust the offset 0.2m to the left and vice versa to keep distance away from the big truck.
 Sometimes the car is driving too much "dead center", human driver wont do that
 
-![pic1](https://raw.githubusercontent.com/299299/openpilot/stock_additions_new/doc/lateral_offset.png)
+![pic1](./doc/lateral_offset.png?raw=true)
