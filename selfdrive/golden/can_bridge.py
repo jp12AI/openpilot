@@ -36,7 +36,7 @@ def main():
 
   q = Queue()
 
-  t = threading.Thread(target=keyboard_poll_thread, args=(q))
+  t = threading.Thread(target=keyboard_poll_thread, args=[q])
   t.start()
 
   pm = messaging.PubMaster(['can', 'health'])
