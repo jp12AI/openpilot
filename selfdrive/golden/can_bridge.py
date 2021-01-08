@@ -75,6 +75,9 @@ def main():
   speed = 50.0 / 3.6
   cruise_button = 0
 
+  btn_list = []
+  btn_hold_times = 2
+
   while 1:
     # check keyboard input
     if not q.empty():
@@ -89,16 +92,27 @@ def main():
       if m[0] == "cruise":
         if m[1] == "down":
           cruise_button = CruiseButtons.DECEL_SET
-          engage = True
+          if len(btn_list) == 0:
+            for x in range(btn_hold_times):
+              btn_list.append(cruise_button)
         if m[1] == "up":
           cruise_button = CruiseButtons.RES_ACCEL
-          engage = True
+          if len(btn_list) == 0:
+            for x in range(btn_hold_times):
+              btn_list.append(cruise_button)
         if m[1] == "cancel":
           cruise_button = CruiseButtons.CANCEL
-          engage = False
+          if len(btn_list) == 0:
+            for x in range(btn_hold_times):
+              btn_list.append(cruise_button)
+
+    btn = 0
+    if len(btn_list) > 0:
+      btn = btn_list[0]
+      btn_list.pop(0)
 
     # print ('cruise_button=', cruise_button)
-    can_function(pm, speed * 3.6, steer_angle, rk.frame, cruise_button=cruise_button, is_engaged=1)
+    can_function(pm, speed * 3.6, steer_angle, rk.frame, cruise_button=btn, is_engaged=1)
     #if rk.frame%5 == 0:
     #  throttle, brake, steer = sendcan_function(sendcan)
     #  steer_angle += steer/10000.0 # torque
