@@ -30,6 +30,7 @@ def main():
   params.delete("CalibrationParams")
   params.put("CalibrationParams", '{"calib_radians": [0,0,0], "valid_blocks": 20}')
 
+  os.system('rm /tmp/op_git_updated')
   os.system('echo 1 > /tmp/op_simulation')
   os.system('echo 1 > /tmp/force_calibration')
   os.system('service call audio 3 i32 3 i32 0 i32 1')
@@ -87,6 +88,9 @@ def main():
 def signal_handler(sig, frame):
     print('You pressed Ctrl+C!')
 
+    global params
+    params.delete("CalibrationParams")
+
     global pm
 
     dat = messaging.new_message('health')
@@ -101,9 +105,6 @@ def signal_handler(sig, frame):
     for seq in range(10):
       pm.send('health', dat)
       time.sleep(0.1)
-
-    global params
-    params.delete("CalibrationParams")
 
     print ("exiting")
     sys.exit(0)
