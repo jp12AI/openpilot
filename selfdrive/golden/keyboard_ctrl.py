@@ -14,6 +14,12 @@ ISPEED = 4
 OSPEED = 5
 CC = 6
 
+running = True
+
+def keyboard_shutdown():
+    global running
+    running = False
+
 def getch():
   fd = sys.stdin.fileno()
   old_settings = termios.tcgetattr(fd)
@@ -35,7 +41,9 @@ def getch():
   return ch
 
 def keyboard_poll_thread(q):
-  while True:
+  global running
+
+  while running:
     c = getch()
     # print("got %s" % c)
     if c == '1':
@@ -45,5 +53,8 @@ def keyboard_poll_thread(q):
     if c == '3':
       q.put(str("cruise_cancel"))
     if c == 'q':
-      exit(0)
-
+      q.put(str("quit"))
+    if c == 'c':
+      q.put(str("quit"))
+    if c == 3:
+      q.put(str("quit"))

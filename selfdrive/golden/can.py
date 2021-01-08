@@ -33,7 +33,7 @@ SR = 7.5
 def angle_to_sangle(angle):
   return - math.degrees(angle) * SR
 
-def can_function(pm, speed, angle, idx, cruise_button=0, is_engaged=False):
+def can_function(pm, speed, angle, idx, cruise_button=0, is_engaged=0):
   msg = []
   msg.append(packer.make_can_msg("ENGINE_DATA", 0, {"XMISSION_SPEED": speed}, idx))
   msg.append(packer.make_can_msg("WHEEL_SPEEDS", 0,

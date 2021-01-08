@@ -17,9 +17,35 @@ import sys
 import signal
 import threading
 from queue import Queue
-from selfdrive.golden.keyboard_ctrl import keyboard_poll_thread
+from selfdrive.golden.keyboard_ctrl import keyboard_poll_thread, keyboard_shutdown
 
 params = Params()
+
+def shutdown():
+  global params
+  global pm
+
+  print('shutdown !')
+
+  keyboard_shutdown()
+
+  params.delete("CalibrationParams")
+
+  dat = messaging.new_message('health')
+  dat.valid = True
+  dat.health = {
+    'ignitionLine': False,
+    'hwType': "uno",
+    'controlsAllowed': True,
+    'safetyModel': "hondaNidec"
+  }
+
+  for seq in range(10):
+    pm.send('health', dat)
+    time.sleep(0.1)
+
+  print ("exiting")
+  sys.exit(0)
 
 def main():
 
@@ -47,15 +73,18 @@ def main():
   rk = Ratekeeper(100, print_delay_threshold=None)
   steer_angle = 0.0
   speed = 50.0 / 3.6
-  engage = False
   cruise_button = 0
 
   while 1:
-
     # check keyboard input
     if not q.empty():
       message = q.get()
       print (message)
+
+      if (message == 'quit'):
+        shutdown()
+        return
+
       m = message.split('_')
       if m[0] == "cruise":
         if m[1] == "down":
@@ -68,7 +97,8 @@ def main():
           cruise_button = CruiseButtons.CANCEL
           engage = False
 
-    can_function(pm, speed * 3.6, steer_angle, rk.frame, cruise_button=cruise_button, is_engaged=engage)
+    # print ('cruise_button=', cruise_button)
+    can_function(pm, speed * 3.6, steer_angle, rk.frame, cruise_button=cruise_button, is_engaged=1)
     #if rk.frame%5 == 0:
     #  throttle, brake, steer = sendcan_function(sendcan)
     #  steer_angle += steer/10000.0 # torque
@@ -86,35 +116,17 @@ def main():
 
     rk.keep_time()
 
+  shutdown()
+
 def signal_handler(sig, frame):
     print('You pressed Ctrl+C!')
-
-    global params
-    global pm
-
-    params.delete("CalibrationParams")
-
-    dat = messaging.new_message('health')
-    dat.valid = True
-    dat.health = {
-      'ignitionLine': False,
-      'hwType': "uno",
-      'controlsAllowed': True,
-      'safetyModel': "hondaNidec"
-    }
-
-    for seq in range(10):
-      pm.send('health', dat)
-      time.sleep(0.1)
-
-    print ("exiting")
-    sys.exit(0)
+    shutdown()
 
 if __name__ == "__main__":
   signal.signal(signal.SIGINT, signal_handler)
 
-  print ("input 1 to curse set/-")
-  print ("input 2 to curse resume/+")
+  print ("input 1 to curse resume/+")
+  print ("input 2 to curse set/-")
   print ("input 3 to curse cancel")
   print ("input q to quit")
 
