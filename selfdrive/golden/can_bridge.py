@@ -18,11 +18,16 @@ import subprocess
 import sys
 import signal
 
+from multiprocessing import Process, Queue
+from selfdrive.golden.keyboard_ctrl import keyboard_poll_thread
+
 params = Params()
 
 def main():
 
   global params
+  global pm
+
   params.delete("Offroad_ConnectivityNeeded")
   params.delete("CalibrationParams")
   params.put("CalibrationParams", '{"calib_radians": [0,0,0], "valid_blocks": 20}')
@@ -31,12 +36,8 @@ def main():
   os.system('echo 1 > /tmp/force_calibration')
   os.system('service call audio 3 i32 3 i32 0 i32 1')
 
-  rom multiprocessing import Process, Queue
   q = Queue()
-  from selfdrive.golden.keyboard_ctrl import keyboard_poll_thread
-    keyboard_poll_thread(q)
-
-  global pm
+  keyboard_poll_thread(q)
 
   pm = messaging.PubMaster(['can', 'health'])
 
