@@ -47,16 +47,3 @@ def keyboard_poll_thread(q):
     if c == 'q':
       exit(0)
 
-def test(q):
-  while 1:
-    print("hello")
-    time.sleep(1.0)
-
-if __name__ == '__main__':
-  from multiprocessing import Process, Queue
-  q : Any = Queue()
-  p = Process(target=test, args=(q,))
-  p.daemon = True
-  p.start()
-
-  keyboard_poll_thread(q)

@@ -12,13 +12,11 @@ from common.params import Params
 from common.realtime import Ratekeeper
 from selfdrive.golden.can import can_function, sendcan_function
 from selfdrive.car.honda.values import CruiseButtons
-import queue
 import subprocess
-
 import sys
 import signal
-
-from multiprocessing import Process, Queue
+import threading
+from queue import Queue
 from selfdrive.golden.keyboard_ctrl import keyboard_poll_thread
 
 params = Params()
@@ -37,7 +35,9 @@ def main():
   os.system('service call audio 3 i32 3 i32 0 i32 1')
 
   q = Queue()
-  keyboard_poll_thread(q)
+
+  t = threading.Thread(target=keyboard_poll_thread, args=(q))
+  t.start()
 
   pm = messaging.PubMaster(['can', 'health'])
 
