@@ -55,6 +55,7 @@ def main():
     # check keyboard input
     if not q.empty():
       message = q.get()
+      print (message)
       m = message.split('_')
       if m[0] == "cruise":
         if m[1] == "down":
@@ -89,9 +90,9 @@ def signal_handler(sig, frame):
     print('You pressed Ctrl+C!')
 
     global params
-    params.delete("CalibrationParams")
-
     global pm
+
+    params.delete("CalibrationParams")
 
     dat = messaging.new_message('health')
     dat.valid = True
