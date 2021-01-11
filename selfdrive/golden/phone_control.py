@@ -23,12 +23,6 @@ from cereal import log
 
 NetworkType = log.ThermalData.NetworkType
 
-IP_LIST = ['192.168.43.254',
-           '192.168.43.1',
-           '192.168.3.9',
-           '192.168.3.10',
-           '192.168.137.254',
-           '192.168.5.10'] #'192.168.43.138',
 OP_SIM = '/tmp/op_simulation'
 OP_CARLIBRATION = '/tmp/force_calibration'
 TIME_OUT=1000
@@ -71,10 +65,34 @@ def ping_succeed(ip):
       os.system('echo 1 > ' + OP_SIM)
       os.system('echo 1 > ' + OP_CARLIBRATION)
 
+def is_on_wifi():
+  return HARDWARE.get_network_type() == NetworkType.wifi
+
+def get_my_ip():
+  result = subprocess.check_output(["ifconfig", "wlan0"], stderr=subprocess.STDOUT, encoding='utf8')
+  result = re.findall(r"inet addr:((\d+\.){3}\d+)", result)[0][0]
+  return result
+
+def get_ip_options(cur_ip):
+    #cur_ip = get_my_ip()
+    if (cur_ip.startswith('192.168.3.')):
+      return ['192.168.3.8', '192.168.3.10', '192.168.3.9']
+
+    if (cur_ip.startswith('192.168.43.'))
+      return ['192.168.43.1', '192.168.43.254']
+
+    if (cur_ip.startswith('192.168.5.'))
+      return ['192.168.5.10']
+
+
 def try_to_connect(last_ip=None):
     if os.path.exists('/tmp/ip.tmp'):
       os.system('rm /tmp/ip.tmp')
     #os.system('rm ' + OP_SIM)
+
+    cur_ip = get_my_ip()
+    print ('my ip=', cur_ip)
+    IP_LIST = get_ip_options(cur_ip)
 
     # print ('try_to_connect last_ip=' + str(last_ip))
     # always try to connect to the last connect IP addres first
@@ -93,9 +111,6 @@ def try_to_connect(last_ip=None):
           ping_succeed(ip)
           return ip
     return None
-
-def is_on_wifi():
-  return HARDWARE.get_network_type() == NetworkType.wifi
 
 # create subscirbe sock use ZMQ instead internal msgq,
 # the smart phone side will use port testLiveLocation to synconize data

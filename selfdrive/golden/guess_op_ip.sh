@@ -4,6 +4,7 @@ OFFICE_WIFI_1="yes:CNSVWA1024"
 OFFICE_WIFI_2="yes:DESKTOP-Golden"
 OFFICE_WIFI_3="yes:DESKTOP-Rad"
 HOME_WIFI=" fang_5G"
+HOME_WIFI_2=" fang"
 PHONE_WIFI="yes:golden"
 OS=$(uname)
 MAC_OS="Darwin"
@@ -54,6 +55,12 @@ if [ -z "$OP_IP" ]; then
         fi
 
         if [[ "$WIFI" == "$HOME_WIFI" ]]; then
+            echo "home wifi"
+            export OP_IP=192.168.3.138
+            #launchctl setenv OP_IP "192.168.3.138"
+        fi
+
+        if [[ "$WIFI" == "$HOME_WIFI_2" ]]; then
             echo "home wifi"
             export OP_IP=192.168.3.138
             #launchctl setenv OP_IP "192.168.3.138"
