@@ -20,6 +20,7 @@ import sys
 import subprocess
 from common.hardware import HARDWARE
 from cereal import log
+import re
 
 NetworkType = log.ThermalData.NetworkType
 
@@ -78,10 +79,10 @@ def get_ip_options(cur_ip):
     if (cur_ip.startswith('192.168.3.')):
       return ['192.168.3.8', '192.168.3.10', '192.168.3.9']
 
-    if (cur_ip.startswith('192.168.43.'))
+    if (cur_ip.startswith('192.168.43.')):
       return ['192.168.43.1', '192.168.43.254']
 
-    if (cur_ip.startswith('192.168.5.'))
+    if (cur_ip.startswith('192.168.5.')):
       return ['192.168.5.10']
 
 
