@@ -1,15 +1,31 @@
 #!/usr/bin/bash
 
-ps -ef | grep 'thermald' | grep -v grep | awk '{print $1}' | xargs -r kill -9
-ps -ef | grep 'manager.py' | grep -v grep | awk '{print $1}' | xargs -r kill -9
-ps -ef | grep 'phone_control' | grep -v grep | awk '{print $1}' | xargs -r kill -9
-ps -ef | grep 'manage_athenad' | grep -v grep | awk '{print $1}' | xargs -r kill -9
-ps -ef | grep 'launch_chffrplus' | grep -v grep | awk '{print $1}' | xargs -r kill -9
-ps -ef | grep 'athenad' | grep -v grep | awk '{print $1}' | xargs -r kill -9
-ps -ef | grep 'can_bridge' | grep -v grep | awk '{print $1}' | xargs -r kill -9
-#ps -ef | grep 'start_op' | grep -v grep | awk '{print $1}' | xargs -r kill -9
+function kill_process()
+{
+    proc_name=$1
+    echo 'killing '$proc_name
+    find_result=$(ps -ef | grep $proc_name | awk '{print $2}')
+    if [[ ${find_result} != 0 ]];then
+        kill -2 ${find_result} # kill with ctrl^c
+        kill -9 ${find_result} # force kill
+    fi
+}
 
-ps -ef | grep 'thermald'
-ps -ef | grep 'manager.py'
-ps -ef | grep 'phone_control'
+function check_process()
+{
+    proc_name=$1
+    ps -ef | grep $proc_name
+}
 
+kill_process thermald
+kill_process manager.py
+kill_process phone_control
+kill_process manage_athenad
+kill_process launch_chffrplus
+kill_process athenad
+kill_process can_bridge
+#kill_process start_op
+
+check_process thermald
+check_process manager.py
+check_process phone_control
