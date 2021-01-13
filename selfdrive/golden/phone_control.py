@@ -74,6 +74,11 @@ def get_my_ip():
   result = re.findall(r"inet addr:((\d+\.){3}\d+)", result)[0][0]
   return result
 
+def get_eth_ip():
+  result = subprocess.check_output(["ifconfig", "eth0"], stderr=subprocess.STDOUT, encoding='utf8')
+  result = re.findall(r"inet addr:((\d+\.){3}\d+)", result)[0][0]
+  return result
+
 def get_ip_options(cur_ip):
     #cur_ip = get_my_ip()
     if (cur_ip.startswith('192.168.3.')):
@@ -85,13 +90,17 @@ def get_ip_options(cur_ip):
     if (cur_ip.startswith('192.168.5.')):
       return ['192.168.5.10']
 
+    if (cur_ip.startswith('192.168.137.')):
+      return ['192.168.137.254']
 
 def try_to_connect(last_ip=None):
     if os.path.exists('/tmp/ip.tmp'):
       os.system('rm /tmp/ip.tmp')
     #os.system('rm ' + OP_SIM)
 
-    cur_ip = get_my_ip()
+    cur_ip = get_eth_ip()
+    if not cur_ip:
+      cur_ip = get_my_ip()
     print ('my ip=', cur_ip)
     IP_LIST = get_ip_options(cur_ip)
 

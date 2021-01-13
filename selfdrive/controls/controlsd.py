@@ -70,8 +70,10 @@ class Controls:
       self.sm = messaging.SubMaster(['thermal', 'health', 'model', 'liveCalibration', 'frontFrame',
                                      'dMonitoringState', 'plan', 'pathPlan', 'liveLocationKalman'])
 
+    # golden patched
     self.sm_smiskol = messaging.SubMaster(['radarState', 'dynamicFollowData', 'liveTracks', 'dynamicFollowButton',
-                                           'laneSpeed', 'dynamicCameraOffset', 'modelLongButton'])
+                                           'laneSpeed', 'dynamicCameraOffset', 'modelLongButton', 'liveMapData'],
+                                           ignore_alive=['liveMapData'])
 
     self.op_params = opParams()
     self.df_manager = dfManager(self.op_params)
@@ -371,6 +373,10 @@ class Controls:
       self.v_cruise_kph = update_v_cruise(self.v_cruise_kph, CS.buttonEvents, self.enabled)
     elif self.CP.enableCruise and CS.cruiseState.enabled:
       self.v_cruise_kph = CS.cruiseState.speed * CV.MS_TO_KPH
+
+    # golden patched
+    if self.sm_smiskol.updated['liveMapData']:
+      self.v_cruise_kph = self.sm_smiskol['liveMapData'].speedLimit * CV.MS_TO_KPH
 
     # decrease the soft disable timer at every step, as it's reset on
     # entrance in SOFT_DISABLING state
