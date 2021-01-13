@@ -218,6 +218,7 @@ def process_phone_data(sync_data):
       live_map_data.speedAdvisory = remain_dist
       live_map_data.wayId = nav_icon
       live_map_data.speedLimitAheadDistance = float(send_lc_dir)
+      #print ("phone_control speed_limit=", speed_limit)
 
       pm.send('liveMapData', dat)
 

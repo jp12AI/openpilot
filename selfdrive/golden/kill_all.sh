@@ -25,3 +25,9 @@ kill_process can_bridge
 check_process thermald
 check_process manager.py
 check_process phone_control
+
+if [ -z "$1" ]; then
+    echo ''
+else
+    kill_process start_op
+fi

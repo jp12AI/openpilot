@@ -499,6 +499,10 @@ def manager_thread():
   started_prev = False
   logger_dead = False
 
+  #golden patched
+  log_frames = 0
+  LOG_FRAME_NUM = 10
+
   while 1:
     msg = messaging.recv_sock(thermal_sock, wait=True)
 
@@ -538,9 +542,13 @@ def manager_thread():
 
     started_prev = msg.thermal.started
 
-    # check the status of all processes, did any of them die?
-    running_list = ["%s%s\u001b[0m" % ("\u001b[32m" if running[p].is_alive() else "\u001b[31m", p) for p in running]
-    cloudlog.debug(' '.join(running_list))
+    #golden patched, avoid too much logs
+    log_frames += 1
+    if log_frames > LOG_FRAME_NUM:
+      log_frames = 0
+      # check the status of all processes, did any of them die?
+      running_list = ["%s%s\u001b[0m" % ("\u001b[32m" if running[p].is_alive() else "\u001b[31m", p) for p in running]
+      cloudlog.debug(' '.join(running_list))
 
     # Exit main loop when uninstall is needed
     if params.get("DoUninstall", encoding='utf8') == "1":

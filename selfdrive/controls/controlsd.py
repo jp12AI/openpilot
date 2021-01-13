@@ -376,9 +376,9 @@ class Controls:
 
     # golden patched
     if self.sm_smiskol.updated['liveMapData']:
-      if self.sm_smiskol['liveMapData'].speedLimit > 30:
-        self.v_cruise_kph = self.sm_smiskol['liveMapData'].speedLimit * CV.MS_TO_KPH
-        #CS.cruiseState.speed = self.sm_smiskol['liveMapData'].speedLimit
+      v_kph = self.sm_smiskol['liveMapData'].speedLimit * CV.MS_TO_KPH
+      if v_kph > 20:
+        self.v_cruise_kph = v_kph
 
     # decrease the soft disable timer at every step, as it's reset on
     # entrance in SOFT_DISABLING state
