@@ -22,7 +22,7 @@ keep center is there is no car surrounded
 ![keep_center](./doc/keep_center.jpg?raw=true)
 
 ### offline simulation testing tool
-Instead of carla, we use a simple python script to simulate the in car environment with mock can messages
+Instead of carla, we use a simple python script to simulate in car environment with mock can messages
 
 ``` sh
 ssh to C2
@@ -31,10 +31,13 @@ cd /data/openpilot
 ```
 
 you can copy these scripts
+```sh
 ./selfdrive/golden/can_bridge.py
 ./selfdrive/golden/can.py
 ./selfdrive/golden/keyboard_ctrl.py
+```
 
 to selfdrive/golden/ folder with you own repo without modifying any source code of openpilot
 
 ![pic2](./doc/sim_script.png?raw=true)
+

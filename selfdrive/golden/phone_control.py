@@ -21,6 +21,7 @@ import subprocess
 from common.hardware import HARDWARE
 from cereal import log
 import re
+from selfdrive.config import Conversions as CV
 
 NetworkType = log.ThermalData.NetworkType
 
@@ -211,7 +212,7 @@ def process_phone_data(sync_data):
       dat = messaging.new_message('liveMapData')
       dat.valid = True
       live_map_data = dat.liveMapData
-      live_map_data.speedLimit = speed_limit * 1.08 * 3.6
+      live_map_data.speedLimit = speed_limit * 1.08 * CV.KPH_TO_MS
       live_map_data.distToTurn = dist_to_next_step
       live_map_data.speedAdvisoryValid = has_exit
       live_map_data.speedAdvisory = remain_dist
