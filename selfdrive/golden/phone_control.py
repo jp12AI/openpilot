@@ -70,9 +70,12 @@ def is_on_wifi():
   return HARDWARE.get_network_type() == NetworkType.wifi
 
 def get_my_ip():
-  result = subprocess.check_output(["ifconfig", "wlan0"], stderr=subprocess.STDOUT, encoding='utf8')
-  result = re.findall(r"inet addr:((\d+\.){3}\d+)", result)[0][0]
-  return result
+  try:
+    result = subprocess.check_output(["ifconfig", "wlan0"], stderr=subprocess.STDOUT, encoding='utf8')
+    result = re.findall(r"inet addr:((\d+\.){3}\d+)", result)[0][0]
+    return result
+  except:
+    return None
 
 def get_eth_ip():
   try:
@@ -104,6 +107,10 @@ def try_to_connect(last_ip=None):
     cur_ip = get_eth_ip()
     if not cur_ip:
       cur_ip = get_my_ip()
+
+    if not cur_ip:
+      return None
+
     print ('my ip=', cur_ip)
     IP_LIST = get_ip_options(cur_ip)
 
