@@ -113,10 +113,10 @@ def main():
 
     # print ('cruise_button=', cruise_button)
     can_function(pm, speed * 3.6, steer_angle, rk.frame, cruise_button=btn, is_engaged=1)
-    #if rk.frame%5 == 0:
-    #  throttle, brake, steer = sendcan_function(sendcan)
-    #  steer_angle += steer/10000.0 # torque
-    #  # print(speed * 3.6, steer, throttle, brake)
+    if rk.frame%5 == 0:
+      throttle, brake, steer = sendcan_function(sendcan)
+      steer_angle += steer/10000.0 # torque
+      #print(speed * 3.6, steer, throttle, brake)
 
     dat = messaging.new_message('health')
     dat.valid = True
@@ -124,7 +124,8 @@ def main():
       'ignitionLine': True,
       'hwType': "uno",
       'controlsAllowed': True,
-      'safetyModel': "hondaNidec"
+      'safetyModel': "hondaNidec",
+      'fanSpeedRpm' : 1000
     }
     pm.send('health', dat)
 
