@@ -75,9 +75,12 @@ def get_my_ip():
   return result
 
 def get_eth_ip():
-  result = subprocess.check_output(["ifconfig", "eth0"], stderr=subprocess.STDOUT, encoding='utf8')
-  result = re.findall(r"inet addr:((\d+\.){3}\d+)", result)[0][0]
-  return result
+  try:
+    result = subprocess.check_output(["ifconfig", "eth0"], stderr=subprocess.STDOUT, encoding='utf8')
+    result = re.findall(r"inet addr:((\d+\.){3}\d+)", result)[0][0]
+    return result
+  except:
+    return None
 
 def get_ip_options(cur_ip):
     #cur_ip = get_my_ip()
