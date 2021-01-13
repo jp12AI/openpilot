@@ -31,11 +31,9 @@ cd /data/openpilot
 ```
 
 you can copy these scripts
-```sh
-./selfdrive/golden/can_bridge.py
-./selfdrive/golden/can.py
-./selfdrive/golden/keyboard_ctrl.py
-```
+[can_bridge.py](../blob/stock_additions_new/selfdrive/golden/can_bridge.py)
+[can.py](../blob/stock_additions_new/selfdrive/golden/can.py)
+[keyboard_ctrl.py](../blob/stock_additions_new/selfdrive/golden/keyboard_ctrl.py)
 
 to selfdrive/golden/ folder with you own repo without modifying any source code of openpilot
 
