@@ -12,7 +12,7 @@ import textwrap
 from typing import Dict, List
 from selfdrive.swaglog import cloudlog, add_logentries_handler
 from common.op_params import opParams
-from common.is_shane import is_shane
+from common.is_shane import is_shane, is_golden
 
 
 from common.basedir import BASEDIR
@@ -130,7 +130,8 @@ if not prebuilt:
       compile_output += r
 
       if retry:
-        if not os.getenv("CI") and not is_shane:
+        # golden patched
+        if not os.getenv("CI") and not is_shane and not is_golden:
           print("scons build failed, cleaning in")
           for i in range(3, -1, -1):
             print("....%d" % i)
