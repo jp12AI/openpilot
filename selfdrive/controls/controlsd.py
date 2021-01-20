@@ -83,7 +83,6 @@ class Controls:
 
     # golden patched
     self.log_frame = 0
-    self.log_times = 0
     self.git_check_time = sec_since_boot()
     self.git_alert_times = 10
 
@@ -245,34 +244,32 @@ class Controls:
       # only plan not being received: radar not communicating
       self.events.add(EventName.radarCommIssue)
     elif not self.sm.all_alive_and_valid():
-      self.events.add(EventName.commIssue)
+      if self.enabled:
+        # golden patched
+        log_text_1 = 'nv: '
+        service_list = self.sm.valid.keys()
+        for s in service_list:
+          if not self.sm.valid[s]:
+            log_text_1 += str(s)
+            log_text_1 += ','
 
-      # golden patched
-      if self.enabled and self.log_times < 100:
+        log_text_2 = 'na: '
+        service_list = self.sm.alive.keys()
+        for s in service_list:
+          if not self.sm.alive[s]:
+            if s not in self.sm.ignore_alive:
+              log_text_2 += str(s)
+              log_text_2 += ','
 
-        if self.log_frame % 1000 == 0:
-          log_text = 'not_valid:\n'
-          service_list = self.sm.valid.keys()
-          for s in service_list:
-            if not self.sm.valid[s]:
-              log_text += str(s)
-              log_text += '\n'
-
-          log_text += 'not_alive:\n'
-          service_list = self.sm.alive.keys()
-          for s in service_list:
-            if not self.sm.alive[s]:
-              if s not in self.sm.ignore_alive:
-                log_text += str(s)
-                log_text += '\n'
-
-          text_file = open('/tmp/comm_issue_' + str(self.log_frame) + '.txt', "wt")
-          text_file.write(log_text)
-          text_file.close()
-
-          self.log_times += 1
-
-        self.log_frame += 1
+        #text_file = open('/tmp/comm_issue_' + str(self.log_frame) + '.txt', "wt")
+        #text_file.write(log_text)
+        #text_file.close()
+        self.AM.SA_set_frame(self.sm.frame)
+        self.AM.SA_set_enabled(self.enabled)
+        self.AM.SA_add('commIssueAlert', extra_text_1=log_text_1, extra_text_2=log_text_2)
+      else:
+        self.events.add(EventName.commIssue)
+      #self.log_frame += 1
 
     if not self.sm['pathPlan'].mpcSolutionValid:
       self.events.add(EventName.plannerError)

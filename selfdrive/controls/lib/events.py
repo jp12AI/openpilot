@@ -212,6 +212,15 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
 
   # ********** events only containing alerts displayed in all states **********
 
+#golden patched
+'commIssueAlert': {
+    ET.PERMANENT: Alert(
+      "",
+      "",
+      AlertStatus.critical, AlertSize.full,
+      Priority.MID, VisualAlert.none, AudibleAlert.none, .4, 0., 2),
+  },
+
 'modelLongAlert': {
     ET.PERMANENT: Alert(
       "Model longitudinal ",
