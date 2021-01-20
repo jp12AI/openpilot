@@ -225,6 +225,10 @@ int main(int argc, char* argv[]) {
   const int MAX_VOLUME = LEON ? 15 : 12;
   s->sound->setVolume(MIN_VOLUME);
 
+  if( access( "/tmp/op_simulation", F_OK ) == 0 ) {
+    s->sound->setVolume(0);
+  }
+
   bool last_started = s->started;
   while (!do_exit) {
     if (!s->started) {
@@ -259,6 +263,9 @@ int main(int argc, char* argv[]) {
 
     // up one notch every 5 m/s
     s->sound->setVolume(fmin(MAX_VOLUME, MIN_VOLUME + s->scene.controls_state.getVEgo() / 5));
+    if ( access( "/tmp/op_simulation", F_OK ) == 0 ) {
+      s->sound->setVolume(0);
+    }
 
     // set brightness
     float clipped_brightness = fmin(512, (s->light_sensor*brightness_m) + brightness_b);
