@@ -223,10 +223,14 @@ int main(int argc, char* argv[]) {
 
   const int MIN_VOLUME = LEON ? 12 : 9;
   const int MAX_VOLUME = LEON ? 15 : 12;
-  s->sound->setVolume(MIN_VOLUME);
 
+  // golden patched
   if( access( "/tmp/op_simulation", F_OK ) == 0 ) {
     s->sound->setVolume(0);
+  }
+  else
+  {
+    s->sound->setVolume(MIN_VOLUME);
   }
 
   bool last_started = s->started;
@@ -262,9 +266,14 @@ int main(int argc, char* argv[]) {
     }
 
     // up one notch every 5 m/s
-    s->sound->setVolume(fmin(MAX_VOLUME, MIN_VOLUME + s->scene.controls_state.getVEgo() / 5));
-    if ( access( "/tmp/op_simulation", F_OK ) == 0 ) {
+    // golden patched
+    if ( access( "/tmp/op_simulation", F_OK ) == 0 )
+    {
       s->sound->setVolume(0);
+    }
+    else
+    {
+      s->sound->setVolume(fmin(MAX_VOLUME, MIN_VOLUME + s->scene.controls_state.getVEgo() / 5));
     }
 
     // set brightness
