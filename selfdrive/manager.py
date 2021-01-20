@@ -32,6 +32,7 @@ else:
 #golden patched
 kill_updated = True #opParams().get('update_behavior').lower().strip() == 'off' or os.path.exists('/data/no_ota_updates')
 kill_loggd = os.path.exists('/tmp/op_no_log')
+print ('kill_loggd=', loggerd)
 
 # Create folders needed for msgq
 try:
