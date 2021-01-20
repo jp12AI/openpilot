@@ -166,8 +166,7 @@ def process_phone_data(sync_data):
       # sometimes the datetime in C2 is not correct (1970),
       # we can use phone to open android setting and disable & enable time sync to solve it
       if last_debug_mode != debug_mode:
-
-      print ('get debug mode =', debug_mode)
+        print ('get debug mode =', debug_mode)
 
         if debug_mode == 1:
           os.system('am start -a android.settings.SETTINGS')
