@@ -513,7 +513,6 @@ def manager_thread():
     if msg.thermal.freeSpace < 0.5:
       logger_dead = True
 
-    # golden
     if os.path.exists('/tmp/op_simulation'):
       logger_dead = True
 
