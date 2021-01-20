@@ -27,6 +27,7 @@ NetworkType = log.ThermalData.NetworkType
 
 OP_SIM = '/tmp/op_simulation'
 OP_CARLIBRATION = '/tmp/force_calibration'
+OP_NO_LOG = '/tmp/op_no_log'
 TIME_OUT=1000
 
 last_debug_mode = 0
@@ -167,6 +168,10 @@ def process_phone_data(sync_data):
       if last_debug_mode != debug_mode:
         if debug_mode == 1:
           os.system('am start -a android.settings.SETTINGS')
+        elif debug_mode == 2:
+          os.system('touch ' + OP_NO_LOG)
+        elif debug_mode == 3:
+          os.system('rm ' + OP_NO_LOG)
         else:
           os.system('killall -9 com.android.settings')
         last_debug_mode = debug_mode
