@@ -13,7 +13,7 @@ from typing import Dict, List
 from selfdrive.swaglog import cloudlog, add_logentries_handler
 from common.op_params import opParams
 from common.is_shane import is_shane, is_golden
-
+from common.realtime import sec_since_boot, Ratekeeper
 
 from common.basedir import BASEDIR
 from common.hardware import HARDWARE, ANDROID, PC
@@ -358,8 +358,13 @@ def prepare_managed_process(p):
   proc = managed_processes[p]
   if isinstance(proc, str):
     # import this python
+    t1 = sec_since_boot()
     cloudlog.info("preimporting %s" % proc)
     importlib.import_module(proc)
+    t2 = sec_since_boot()
+
+    print ('time cost=', (t2-t1))
+
   elif os.path.isfile(os.path.join(BASEDIR, proc[0], "Makefile")):
     # build this process
     cloudlog.info("building %s" % (proc,))

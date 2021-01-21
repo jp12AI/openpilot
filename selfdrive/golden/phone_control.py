@@ -61,7 +61,7 @@ def ping(ip):
     return status
 
 def ping_succeed(ip):
-    print('ping ' + ip + ' successed !')
+    # print('ping ' + ip + ' successed !')
     os.system('echo ' + ip + ' > /tmp/ip.tmp')
     # the WIFI ip range of my home ... which means C2 is not in the car ...
     if ip.startswith('192.168.3.'):
