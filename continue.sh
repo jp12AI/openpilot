@@ -5,12 +5,11 @@ touch /data/no_ota_updates
 cd /data/openpilot
 #git pull --rebase
 
-rm /tmp/op_start
-rm /tmp/op_stop
 rm /tmp/ip.tmp
 rm /tmp/op_simulation
 #rm /tmp/lane_offset
 rm /tmp/op_date
+rm /tmp/git_hash
 #rm /tmp/op_git_updated
 
 #NOW=$(date +"%m_%d_%Y")
