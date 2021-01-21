@@ -91,6 +91,14 @@ from multiprocessing import Process
 
 # Run scons
 spinner = Spinner()
+
+#golden pached
+if os.path.exists('/tmp/op_git_updated'):
+  prebuilt = False
+  os.system('rm /tmp/op_git_updated')
+else:
+  prebuilt = True
+
 spinner.update("0")
 if __name__ != "__main__":
   spinner.close()
