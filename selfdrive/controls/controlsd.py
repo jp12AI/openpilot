@@ -260,6 +260,7 @@ class Controls:
             if s not in self.sm.ignore_alive:
               log_text_2 += str(s)
               log_text_2 += ','
+        log_text_2 += str(self.CS.canValid)
 
         #text_file = open('/tmp/comm_issue_' + str(self.log_frame) + '.txt', "wt")
         #text_file.write(log_text)
