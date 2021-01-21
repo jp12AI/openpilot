@@ -14,7 +14,7 @@ from common.filter_simple import FirstOrderFilter
 from common.hardware import EON, HARDWARE, TICI
 from common.numpy_fast import clip, interp
 from common.params import Params
-from common.realtime import DT_TRML, sec_since_boot
+from common.realtime import DT_TRML, sec_since_boot, Ratekeeper
 from selfdrive.controls.lib.alertmanager import set_offroad_alert
 from selfdrive.loggerd.config import get_available_percent
 from selfdrive.pandad import get_expected_signature
@@ -173,6 +173,9 @@ def thermald_thread():
   thermal_sock = messaging.pub_sock('thermal')
   health_sock = messaging.sub_sock('health', timeout=health_timeout)
   location_sock = messaging.sub_sock('gpsLocation')
+
+  # golden patched
+  rk = Ratekeeper(20.0, print_delay_threshold=None)
 
   fan_speed = 0
   count = 0
@@ -424,6 +427,10 @@ def thermald_thread():
                      thermal=msg.to_dict())
 
     count += 1
+
+    # golden patched
+    rk.keep_time()
+
 
 
 def main():

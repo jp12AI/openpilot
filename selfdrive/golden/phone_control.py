@@ -113,7 +113,7 @@ def try_to_connect(last_ip=None):
     if not cur_ip:
       return None
 
-    print ('my ip=', cur_ip)
+    # print ('my ip=', cur_ip)
     IP_LIST = get_ip_options(cur_ip)
 
     # print ('try_to_connect last_ip=' + str(last_ip))
@@ -289,7 +289,7 @@ def main():
   last_debug_mode = 0
 
   no_data_received_num = 0
-  LOST_CONNECTION_NUM = 10
+  LOST_CONNECTION_NUM = 20
 
   git_fetched = False
   start_sec = sec_since_boot()
@@ -312,7 +312,7 @@ def main():
       if not sync_data:
         no_data_received_num += 1
         if no_data_received_num >= LOST_CONNECTION_NUM:
-          print ('lost connection of ' + str(ip))
+          # print ('lost connection of ' + str(ip))
           sync_sock = None
           last_ip = ip
           ip = None
