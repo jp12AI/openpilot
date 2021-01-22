@@ -90,7 +90,10 @@ import traceback
 from multiprocessing import Process
 
 # Run scons
+t1 = sec_since_boot()
 spinner = Spinner()
+t2 = sec_since_boot()
+print ('spinner time cost=', (t2 - t1))
 
 #golden pached
 if os.path.exists('/tmp/op_git_updated'):
