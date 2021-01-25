@@ -263,12 +263,24 @@ class Controls:
         #       log_text_2 += ','
         #log_text_2 += str(CS.canValid)
 
-        is_model_valid = self.sm.valid['model']
-        is_radar_valid = self.sm_smiskol.valid['radarState']
-        log_text_2 += 'm: '
-        log_text_2 += str(is_model_valid)
-        log_text_2 += ' r: '
-        log_text_2 += str(is_radar_valid)
+        is_model_valid = 0
+        if self.sm.valid['model']:
+          is_model_valid = 1
+        is_radar_valid = 0
+        if self.sm_smiskol.valid['radarState']:
+          is_radar_valid = 1
+        is_model_alive = 0
+        if self.sm.alive['model']:
+          is_model_alive = 1
+        is_radar_alive = 0
+        if self.sm_smiskol.alive['radarState']:
+          is_radar_alive = 1
+        log_text_2 += 'm(v,a):'
+        log_text_2 += str(is_model_valid) + ','
+        log_text_2 += str(is_model_alive) + ' '
+        log_text_2 += 'r(v,a):'
+        log_text_2 += str(is_radar_valid) + ','
+        log_text_2 += str(is_radar_alive)
 
         # plan_send.valid = sm.all_alive_and_valid(service_list=['carState', 'controlsState', 'radarState'])
 
