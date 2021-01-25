@@ -65,7 +65,7 @@ def ping_succeed(ip):
     os.system('echo ' + ip + ' > /tmp/ip.tmp')
     # the WIFI ip range of my home ... which means C2 is not in the car ...
     if ip.startswith('192.168.3.'):
-      os.system('echo 1 > ' + OP_SIM)
+      #os.system('echo 1 > ' + OP_SIM)
       os.system('echo 1 > ' + OP_CARLIBRATION)
 
 def is_on_wifi():

@@ -57,8 +57,19 @@ def main():
   params.put("CalibrationParams", '{"calib_radians": [0,0,0], "valid_blocks": 20}')
 
   os.system('rm /tmp/op_git_updated')
-  os.system('echo 1 > /tmp/op_simulation')
+
+  no_loggerd = True
+  if len(sys.argv) > 1:
+    no_loggerd = (sys.argv[1] == '1')
+
+  print ('no_loggerd=', no_loggerd)
+
+  if no_loggerd:
+    os.system('echo 1 > /tmp/op_simulation')
+
   os.system('echo 1 > /tmp/force_calibration')
+
+  # make volume 0
   os.system('service call audio 3 i32 3 i32 0 i32 1')
 
   q = Queue()
@@ -77,6 +88,8 @@ def main():
 
   btn_list = []
   btn_hold_times = 2
+
+  frames = 0
 
   while 1:
     # check keyboard input
@@ -118,16 +131,19 @@ def main():
       steer_angle += steer/10000.0 # torque
       #print(speed * 3.6, steer, throttle, brake)
 
-    dat = messaging.new_message('health')
-    dat.valid = True
-    dat.health = {
-      'ignitionLine': True,
-      'hwType': "uno",
-      'controlsAllowed': True,
-      'safetyModel': "hondaNidec",
-      'fanSpeedRpm' : 1000
-    }
-    pm.send('health', dat)
+    if frames % 20 == 0:
+      dat = messaging.new_message('health')
+      dat.valid = True
+      dat.health = {
+        'ignitionLine': True,
+        'hwType': "uno",
+        'controlsAllowed': True,
+        'safetyModel': "hondaNidec",
+        'fanSpeedRpm' : 1000
+      }
+      pm.send('health', dat)
+
+    frames += 1
 
     rk.keep_time()
 
@@ -140,6 +156,7 @@ def signal_handler(sig, frame):
 if __name__ == "__main__":
   signal.signal(signal.SIGINT, signal_handler)
 
+  print (sys.argv)
   print ("input 1 to curse resume/+")
   print ("input 2 to curse set/-")
   print ("input 3 to curse cancel")
