@@ -13,7 +13,6 @@ It will check if the ego car is in the left most lane or right most lane or midd
 if ego is in left most lane, it will adjust the offset 0.2m to the left and vice versa to keep distance away from the big truck.<br/>
 Sometimes the car is driving too much "dead center", human driver wont do that<br/>
 
-
 ![pic1](./doc/lateral_offset.png?raw=true)
 
 keep left (0.2m) if you have cars on your right side
@@ -30,12 +29,6 @@ ssh to C2
 cd /data/openpilot
 ./selfdrive/golden/can_bridge.py # start simulation
 ```
-
-you can copy these scripts<br/>
-[can_bridge.py](../stock_additions_new/selfdrive/golden/can_bridge.py)<br/>
-[can.py](../stock_additions_new/selfdrive/golden/can.py)<br/>
-[keyboard_ctrl.py](../stock_additions_new/selfdrive/golden/keyboard_ctrl.py)<br/>
-
 to selfdrive/golden/ folder with you own repo without modifying any source code of openpilot
 
 ![pic2](./doc/sim_script.png?raw=true)
