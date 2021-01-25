@@ -247,20 +247,31 @@ class Controls:
       if self.enabled:
         # golden patched
         log_text_1 = 'nv: '
-        service_list = self.sm.valid.keys()
-        for s in service_list:
+        valid_service_list = self.sm.valid.keys()
+        for s in valid_service_list:
           if not self.sm.valid[s]:
             log_text_1 += str(s)
             log_text_1 += ','
 
-        log_text_2 = 'na: '
-        service_list = self.sm.alive.keys()
-        for s in service_list:
-          if not self.sm.alive[s]:
-            if s not in self.sm.ignore_alive:
-              log_text_2 += str(s)
-              log_text_2 += ','
-        log_text_2 += str(CS.canValid)
+        log_text_2 = ''
+        # log_text_2 = 'na: '
+        # alive_service_list = self.sm.alive.keys()
+        # for s in alive_service_list:
+        #   if not self.sm.alive[s]:
+        #     if s not in self.sm.ignore_alive:
+        #       log_text_2 += str(s)
+        #       log_text_2 += ','
+        #log_text_2 += str(CS.canValid)
+
+        is_model_valid = self.sm.valid['model']
+        is_radar_valid = self.sm_smiskol.valid['radarState']
+        log_text_2 += 'm: '
+        log_text_2 += str(is_model_valid)
+        log_text_2 += ' r: '
+        log_text_2 += str(is_radar_valid)
+
+        # plan_send.valid = sm.all_alive_and_valid(service_list=['carState', 'controlsState', 'radarState'])
+
 
         #text_file = open('/tmp/comm_issue_' + str(self.log_frame) + '.txt', "wt")
         #text_file.write(log_text)

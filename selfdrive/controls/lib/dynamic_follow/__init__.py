@@ -14,6 +14,9 @@ from selfdrive.controls.lib.dynamic_follow.support import LeadData, CarData, dfD
 from common.data_collector import DataCollector
 travis = False
 
+#golden patched
+from common.is_shane import is_golden
+
 
 class DistanceModController:
   def __init__(self, k_i, k_d, x_clip, mods):
@@ -365,3 +368,7 @@ class DynamicFollow:
     self.min_TR = self.op_params.get('min_TR')
     if self.min_TR != 1.:
       self.min_TR = clip(self.min_TR, 0.85, 1.6)
+
+    if is_golden:
+      self.global_df_mod = 0.85
+      self.min_TR = 0.85
