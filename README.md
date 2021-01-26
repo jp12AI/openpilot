@@ -1,6 +1,7 @@
 # A Fork of Fork of openpilot
 
-original fork https://github.com/ShaneSmiskol/openpilot/<br/>
+original fork https://github.com/ShaneSmiskol/openpilot/
+
 only tested in car corolla 2020
 
 ## Additional Features
@@ -9,9 +10,11 @@ only tested in car corolla 2020
 [![](https://img.youtube.com/vi/rxTK5McUPA4/0.jpg)](https://www.youtube.com/watch?v=rxTK5McUPA4)
 
 ### automaticlly adjust in lane offset
-It will check if the ego car is in the left most lane or right most lane or middle lane,<br/>
-if ego is in left most lane, it will adjust the offset 0.2m to the left and vice versa to keep distance away from the big truck.<br/>
-Sometimes the car is driving too much "dead center", human driver wont do that<br/>
+It will check if the ego car is in the left most lane or right most lane or middle lane,
+
+if ego is in left most lane, it will adjust the offset 0.2m to the left and vice versa to keep distance away from the big truck.
+
+Sometimes the car is driving too much "dead center", human driver wont do that
 
 ![pic1](./doc/lateral_offset.png?raw=true)
 
