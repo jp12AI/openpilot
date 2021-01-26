@@ -174,9 +174,6 @@ def thermald_thread():
   health_sock = messaging.sub_sock('health', timeout=health_timeout)
   location_sock = messaging.sub_sock('gpsLocation')
 
-  # golden patched
-  rk = Ratekeeper(20.0, print_delay_threshold=None)
-
   fan_speed = 0
   count = 0
 
@@ -427,9 +424,6 @@ def thermald_thread():
                      thermal=msg.to_dict())
 
     count += 1
-
-    # golden patched
-    rk.keep_time()
 
 
 
