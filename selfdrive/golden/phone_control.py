@@ -89,14 +89,14 @@ def get_eth_ip():
 
 def get_ip_options(cur_ip):
     #cur_ip = get_my_ip()
+    if (cur_ip.startswith('192.168.5.')):
+      return ['192.168.5.10']
+
     if (cur_ip.startswith('192.168.3.')):
       return ['192.168.3.8', '192.168.3.10', '192.168.3.9']
 
     if (cur_ip.startswith('192.168.43.')):
       return ['192.168.43.1', '192.168.43.254']
-
-    if (cur_ip.startswith('192.168.5.')):
-      return ['192.168.5.10']
 
     if (cur_ip.startswith('192.168.137.')):
       return ['192.168.137.254']
@@ -209,6 +209,7 @@ def process_phone_data(sync_data):
       if cur_lc_dir != lc_dir:
         send_lc_dir = cur_lc_dir
         lc_dir = cur_lc_dir
+        print ("lc_dir=", lc_dir)
 
 
       # navigation message from amap sdk of phone side
