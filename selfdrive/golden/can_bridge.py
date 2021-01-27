@@ -57,6 +57,7 @@ def main():
   params.put("CalibrationParams", '{"calib_radians": [0,0,0], "valid_blocks": 20}')
 
   os.system('rm /tmp/op_git_updated')
+  os.system('touch /tmp/op_simulation')
 
   start_loggerd = False
   if len(sys.argv) > 1:

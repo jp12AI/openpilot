@@ -25,6 +25,8 @@ from selfdrive.controls.lib.planner import LON_MPC_STEP
 from selfdrive.locationd.calibrationd import Calibration
 from selfdrive.controls.lib.dynamic_follow.df_manager import dfManager
 from common.op_params import opParams
+# golden patched
+import subprocess
 
 LDW_MIN_SPEED = 31 * CV.MPH_TO_MS
 LANE_DEPARTURE_THRESHOLD = 0.1
@@ -82,9 +84,9 @@ class Controls:
     self.last_model_long = False
 
     # golden patched
-    self.log_frame = 0
     self.git_check_time = sec_since_boot()
     self.git_alert_times = 10
+    self.git_alerted = False
 
     self.can_sock = can_sock
     if can_sock is None:
@@ -254,15 +256,6 @@ class Controls:
             log_text_1 += ','
 
         log_text_2 = ''
-        # log_text_2 = 'na: '
-        # alive_service_list = self.sm.alive.keys()
-        # for s in alive_service_list:
-        #   if not self.sm.alive[s]:
-        #     if s not in self.sm.ignore_alive:
-        #       log_text_2 += str(s)
-        #       log_text_2 += ','
-        #log_text_2 += str(CS.canValid)
-
         is_model_valid = 0
         if self.sm.valid['model']:
           is_model_valid = 1
@@ -283,17 +276,11 @@ class Controls:
         log_text_2 += str(is_radar_alive)
 
         # plan_send.valid = sm.all_alive_and_valid(service_list=['carState', 'controlsState', 'radarState'])
-
-
-        #text_file = open('/tmp/comm_issue_' + str(self.log_frame) + '.txt', "wt")
-        #text_file.write(log_text)
-        #text_file.close()
         self.AM.SA_set_frame(self.sm.frame)
         self.AM.SA_set_enabled(self.enabled)
         self.AM.SA_add('commIssueAlert', extra_text_1=log_text_1, extra_text_2=log_text_2)
       else:
         self.events.add(EventName.commIssue)
-      #self.log_frame += 1
 
     if not self.sm['pathPlan'].mpcSolutionValid:
       self.events.add(EventName.plannerError)
@@ -343,6 +330,7 @@ class Controls:
   def add_stock_additions_alerts(self, CS):
     self.AM.SA_set_frame(self.sm.frame)
     self.AM.SA_set_enabled(self.enabled)
+
     # alert priority is defined by code location, keeping is highest, then lane speed alert, then auto-df alert
     if self.sm_smiskol['modelLongButton'].enabled != self.last_model_long:
       extra_text_1 = 'disabled!' if self.last_model_long else 'enabled!'
@@ -382,6 +370,13 @@ class Controls:
       else:
         self.AM.SA_add(df_alert, extra_text_1=df_out.user_profile_text, extra_text_2='Dynamic follow: {} profile active'.format(df_out.user_profile_text))
         return
+
+    if not self.git_alerted:
+      # golden patched
+      git_hash = subprocess.check_output('git log -n 1 --pretty=format:%h', shell=True, encoding='UTF-8')
+      git_date = subprocess.check_output('git log -n 1 --pretty=format:%cd', shell=True, encoding='UTF-8')
+      self.AM.SA_add('gitVersion', extra_text_1='git hash: ' + str(git_hash), extra_text_2=str(git_date))
+      self.git_alerted = True
 
   def data_sample(self):
     """Receive data from sockets and update carState"""

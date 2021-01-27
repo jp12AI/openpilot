@@ -221,6 +221,15 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
       Priority.MID, VisualAlert.none, AudibleAlert.none, .4, 0., 2),
   },
 
+'gitVersion': {
+    ET.PERMANENT: Alert(
+      "",
+      "",
+      AlertStatus.normal, AlertSize.full,
+      Priority.HIGHEST, VisualAlert.none, AudibleAlert.none, .4, 0., 8),
+  },
+
+
 'modelLongAlert': {
     ET.PERMANENT: Alert(
       "Model longitudinal ",
