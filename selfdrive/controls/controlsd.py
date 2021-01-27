@@ -85,7 +85,7 @@ class Controls:
 
     # golden patched
     self.git_check_time = sec_since_boot()
-    self.git_alert_times = 10
+    self.git_alert_times = 6
     self.git_alerted = False
 
     self.can_sock = can_sock
