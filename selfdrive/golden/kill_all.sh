@@ -20,6 +20,7 @@ kill_process manage_athenad
 kill_process launch_chffrplus
 kill_process athenad
 kill_process can_bridge
+kill_process loggerd
 #kill_process start_op
 
 check_process thermald

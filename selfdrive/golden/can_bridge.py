@@ -58,14 +58,14 @@ def main():
 
   os.system('rm /tmp/op_git_updated')
 
-  no_loggerd = True
+  start_loggerd = False
   if len(sys.argv) > 1:
-    no_loggerd = (sys.argv[1] == '1')
+    start_loggerd = (sys.argv[1] == '1')
 
-  print ('no_loggerd=', no_loggerd)
+  print ('start_loggerd=', start_loggerd)
 
-  if no_loggerd:
-    os.system('echo 1 > /tmp/op_simulation')
+  if start_loggerd:
+    os.system('cd /data/openpilot/; ./selfdrive/loggerd/loggerd &')
 
   os.system('echo 1 > /tmp/force_calibration')
 

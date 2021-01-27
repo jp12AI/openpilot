@@ -52,7 +52,8 @@ def can_function(pm, speed, angle, idx, cruise_button=0, is_engaged=0):
   msg.append(packer.make_can_msg("GEARBOX", 0, {"GEAR": 4, "GEAR_SHIFTER": 8}, idx))
   msg.append(packer.make_can_msg("GAS_PEDAL_2", 0, {}, idx))
   msg.append(packer.make_can_msg("SEATBELT_STATUS", 0, {"SEATBELT_DRIVER_LATCHED": 1}, idx))
-  msg.append(packer.make_can_msg("STEER_STATUS", 0, {}, idx))
+  # 1201 makes op think steer wheel is pressed
+  msg.append(packer.make_can_msg("STEER_STATUS", 0, {"STEER_TORQUE_SENSOR": 1201}, idx))
   msg.append(packer.make_can_msg("STEERING_SENSORS", 0, {"STEER_ANGLE": angle_to_sangle(angle)}, idx))
   msg.append(packer.make_can_msg("VSA_STATUS", 0, {}, idx))
   msg.append(packer.make_can_msg("STANDSTILL", 0, {}, idx))
@@ -63,6 +64,7 @@ def can_function(pm, speed, angle, idx, cruise_button=0, is_engaged=0):
   msg.append(packer.make_can_msg("CRUISE", 0, {"CRUISE_SPEED_PCM": speed}, idx))
   msg.append(packer.make_can_msg("SCM_FEEDBACK", 0, {"MAIN_ON": 1}, idx))
   msg.append(packer.make_can_msg("POWERTRAIN_DATA", 0, {"ACC_STATUS": int(is_engaged)}, idx))
+
   #print(msg)
 
   # cam bus
