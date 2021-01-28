@@ -194,11 +194,10 @@ void usb_retry_connect() {
 }
 
 void can_recv(PubMaster &pm) {
-  // create message
-  MessageBuilder msg;
-  auto event = msg.initEvent();
-  panda->can_receive(event);
-  pm.send("can", msg);
+  kj::Array<capnp::word> can_data;
+  panda->can_receive(can_data);
+  auto bytes = can_data.asBytes();
+  pm.send("can", bytes.begin(), bytes.size());
 }
 
 void can_send_thread() {
