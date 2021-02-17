@@ -9,6 +9,11 @@ only tested in car corolla 2020
 ### output all op internal data structure over WIFI for my HMI prototype
 [![](https://img.youtube.com/vi/rxTK5McUPA4/0.jpg)](https://www.youtube.com/watch?v=rxTK5McUPA4)
 
+https://github.com/299299/tesla_hmi
+
+[the code to publish data by wifi using zmq, msg_sync.py](./selfdrive/golden/msg_sync.py)
+[the code to receive data by wifi using zmq (json format)](./selfdrive/golden/phone_control.py)
+
 ### automaticlly adjust in lane offset
 It will check if the ego car is in the left most lane or right most lane or middle lane,
 
