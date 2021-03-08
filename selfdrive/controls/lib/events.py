@@ -229,6 +229,13 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
       Priority.HIGHEST, VisualAlert.none, AudibleAlert.none, .4, 0., 8),
   },
 
+'navigation': {
+    ET.PERMANENT: Alert(
+      "",
+      "",
+      AlertStatus.normal, AlertSize.mid,
+      Priority.LOW, VisualAlert.none, AudibleAlert.none, .2, 0., .1),
+  },
 
 'modelLongAlert': {
     ET.PERMANENT: Alert(

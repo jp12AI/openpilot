@@ -338,6 +338,14 @@ class Controls:
       self.AM.SA_add('modelLongAlert', extra_text_1=extra_text_1, extra_text_2=extra_text_2)
       return
 
+    if self.sm_smiskol.updated['liveMapData']:
+      map_data = self.sm_smiskol['liveMapData']
+      if map_data.speedAdvisoryValid and map_data.distToTurn < 500:
+        dist_text_1 = str(int(map_data.distToTurn)) + " m to off ramp"
+        dist_text_2 = str(int(map_data.speedAdvisory)) + " m to destination"
+        self.AM.SA_add('navigation', extra_text_1=str(dist_text_1), extra_text_2=str(dist_text_2))
+        return
+
     if self.sm_smiskol['dynamicCameraOffset'].keepingLeft:
       self.AM.SA_add('laneSpeedKeeping', extra_text_1='LEFT', extra_text_2='Oncoming traffic in right lane')
       return
@@ -377,6 +385,8 @@ class Controls:
       git_date = subprocess.check_output('git log -n 1 --pretty=format:%cd', shell=True, encoding='UTF-8')
       self.AM.SA_add('gitVersion', extra_text_1='git hash: ' + str(git_hash), extra_text_2=str(git_date))
       self.git_alerted = True
+
+
 
   def data_sample(self):
     """Receive data from sockets and update carState"""
@@ -421,10 +431,10 @@ class Controls:
       self.v_cruise_kph = CS.cruiseState.speed * CV.MS_TO_KPH
 
     # golden patched
-    if self.sm_smiskol.updated['liveMapData']:
-      v_kph = self.sm_smiskol['liveMapData'].speedLimit * CV.MS_TO_KPH
-      if v_kph > 20:
-        self.v_cruise_kph = v_kph
+    # if self.sm_smiskol.updated['liveMapData']:
+    #   v_kph = self.sm_smiskol['liveMapData'].speedLimit * CV.MS_TO_KPH
+    #   if v_kph > 20:
+    #     self.v_cruise_kph = v_kph
 
     # decrease the soft disable timer at every step, as it's reset on
     # entrance in SOFT_DISABLING state
