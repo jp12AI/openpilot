@@ -49,7 +49,7 @@ def msg_sync_thread():
             pub_list[index].send(data)
           frame_counts[index] += 1
       except messaging_pyx.MessagingError:
-        print('MessagingError error happens')
+        print('msg_sync MessagingError error happens ' + sync_topics[index])
 
     time.sleep(SLEEP_TIME)
 

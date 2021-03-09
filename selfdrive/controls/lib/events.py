@@ -234,7 +234,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
       "",
       "",
       AlertStatus.normal, AlertSize.mid,
-      Priority.LOW, VisualAlert.none, AudibleAlert.none, .2, 0., .1),
+      Priority.LOW, VisualAlert.none, AudibleAlert.none, 0, 0, 2.0),
   },
 
 'modelLongAlert': {

@@ -221,12 +221,11 @@ def process_phone_data(sync_data):
       dat.valid = True
       live_map_data = dat.liveMapData
       live_map_data.speedLimit = speed_limit * 1.08 * CV.KPH_TO_MS
-      live_map_data.distToTurn = dist_to_next_step
+      live_map_data.distToTurn = float(dist_to_next_step)
       live_map_data.speedAdvisoryValid = has_exit
-      live_map_data.speedAdvisory = remain_dist
+      live_map_data.speedAdvisory = float(remain_dist)
       live_map_data.wayId = nav_icon
       live_map_data.speedLimitAheadDistance = float(send_lc_dir)
-      #print ("phone_control speed_limit=", speed_limit)
 
       pm.send('liveMapData', dat)
 
@@ -285,7 +284,7 @@ def main():
     sync_sock = create_sub_sock(ip, sync_content, timeout=TIME_OUT)
     last_ip = ip
 
-  rk = Ratekeeper(5.0, print_delay_threshold=None)
+  rk = Ratekeeper(10.0, print_delay_threshold=None)
   pm = messaging.PubMaster(['liveMapData'])
   last_debug_mode = 0
 
