@@ -33,6 +33,15 @@ MAX_BUILD_PROGRESS = 70
 WEBCAM = os.getenv("WEBCAM") is not None
 PREBUILT = os.path.exists(os.path.join(BASEDIR, 'prebuilt'))
 KILL_UPDATED = opParams().get('update_behavior').lower().strip() == 'off' or os.path.exists('/data/no_ota_updates')
+# golden patched
+if os.path.exists('/tmp/op_git_updated'):
+  PREBUILT = False
+  os.system('rm /tmp/op_git_updated')
+else:
+  PREBUILT = True
+KILL_UPDATED = True #opParams().get('update_behavior').lower().strip() == 'off' or os.path.exists('/data/no_ota_updates')
+KILL_LOGD = os.path.exists('/tmp/op_no_log')
+print ('KILL_LOGD=', KILL_LOGD)
 
 
 def unblock_stdout():
@@ -76,6 +85,13 @@ spinner = Spinner()
 spinner.update_progress(0, 100)
 if __name__ != "__main__":
   spinner.close()
+
+#golden pached
+if os.path.exists('/tmp/op_git_updated'):
+  PREBUILT = False
+  os.system('rm /tmp/op_git_updated')
+else:
+  PREBUILT = True
 
 def build():
   env = os.environ.copy()
@@ -180,6 +196,10 @@ managed_processes = {
   "modeld": ("selfdrive/modeld", ["./modeld"]),
   "rtshield": "selfdrive.rtshield",
   # "lanespeedd": "selfdrive.controls.lib.lane_speed",
+
+  #### added by golden ####
+  "msg_sync": "selfdrive.golden.msg_sync",
+  "phone_control": "selfdrive.golden.phone_control"
 }
 
 daemon_processes = {
@@ -207,6 +227,9 @@ persistent_processes = [
   'ui',
   'uploader',
   'deleter',
+
+  # golden patched
+  'phone_control',
 ]
 
 if not PC:
@@ -240,6 +263,9 @@ car_started_processes = [
   'clocksd',
   'logcatd',
   # 'lanespeedd',
+
+  # golden patched
+  'msg_sync',
 ]
 
 driver_view_processes = [
@@ -472,8 +498,12 @@ def manager_thread():
   while 1:
     msg = messaging.recv_sock(device_state_sock, wait=True)
 
-    if msg.deviceState.freeSpacePercent < 5:
+    # golden patched
+    if msg.deviceState.freeSpace < 50:
       logger_dead = True
+    if os.path.exists('/tmp/op_simulation') or KILL_LOGD:
+      logger_dead = True
+
 
     run_all = False
     if msg.deviceState.started or run_all:

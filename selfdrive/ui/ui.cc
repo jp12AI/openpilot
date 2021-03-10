@@ -77,8 +77,9 @@ static void ui_init_vision(UIState *s) {
 
 
 void ui_init(UIState *s) {
+  // golden patched
   s->sm = new SubMaster({"modelV2", "controlsState", "uiLayoutState", "liveCalibration", "radarState", "deviceState", "roadCameraState", "liveLocationKalman",
-                         "pandaState", "carParams", "driverState", "driverMonitoringState", "sensorEvents", "carState", "ubloxGnss"});
+                         "pandaState", "carParams", "driverState", "driverMonitoringState", "sensorEvents", "carState", "ubloxGnss", "laneSpeed"}, nullptr, {"laneSpeed"});
 
   s->started = false;
   s->status = STATUS_OFFROAD;
@@ -243,6 +244,11 @@ static void update_sockets(UIState *s) {
     }
   }
   s->started = scene.deviceState.getStarted() || scene.frontview;
+
+  // golden patched
+  if (sm.updated("laneSpeed")) {
+    s->scene.ego_lane_position = sm["laneSpeed"].getLaneSpeed().getEgoLanePosition();
+  }
 }
 
 static void update_alert(UIState *s) {
