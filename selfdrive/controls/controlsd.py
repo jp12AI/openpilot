@@ -26,6 +26,8 @@ from selfdrive.locationd.calibrationd import Calibration
 from selfdrive.hardware import HARDWARE, TICI
 from selfdrive.controls.lib.dynamic_follow.df_manager import dfManager
 from common.op_params import opParams
+# golden patched
+import subprocesss
 
 LDW_MIN_SPEED = 31 * CV.MPH_TO_MS
 LANE_DEPARTURE_THRESHOLD = 0.1
@@ -73,8 +75,14 @@ class Controls:
                                      'driverMonitoringState', 'longitudinalPlan', 'lateralPlan', 'liveLocationKalman',
                                      'roadCameraState', 'driverCameraState', 'managerState', 'liveParameters', 'radarState'], ignore_alive=ignore)
 
+    # golden patched
     self.sm_smiskol = messaging.SubMaster(['radarState', 'dynamicFollowData', 'liveTracks', 'dynamicFollowButton',
-                                           'laneSpeed', 'dynamicCameraOffset', 'modelLongButton'])
+                                           'laneSpeed', 'dynamicCameraOffset', 'modelLongButton', 'liveMapData'],
+                                           ignore_alive=['liveMapData'])
+    self.git_check_time = sec_since_boot()
+    self.git_alert_times = 6
+    self.git_alerted = False
+    self.nav_alerted = False
 
     self.op_params = opParams()
     self.df_manager = dfManager(self.op_params)
@@ -281,6 +289,15 @@ class Controls:
       and self.CP.openpilotLongitudinalControl and CS.vEgo < 0.3 and not self.last_model_long:
       self.events.add(EventName.noTarget)
 
+    # golden patched
+    if self.git_alert_times >= 0:
+      cur_time = sec_since_boot()
+      if (cur_time - self.git_check_time) > 5:
+        self.git_check_time = cur_time
+        if os.path.exists('/tmp/op_git_updated'):
+          self.git_alert_times -= 1
+          self.events.add(EventName.debugAlert)
+
     self.add_stock_additions_alerts(CS)
 
   def add_stock_additions_alerts(self, CS):
@@ -292,6 +309,13 @@ class Controls:
       extra_text_2 = '' if self.last_model_long else ', model may behave unexpectedly'
       self.AM.SA_add('modelLongAlert', extra_text_1=extra_text_1, extra_text_2=extra_text_2)
       return
+
+    # golden patched
+    if self.sm_smiskol.updated['liveMapData']:
+      if not self.nav_alerted:
+        self.nav_alerted = True
+        self.AM.SA_add('nav_connected')
+        return
 
     if self.sm_smiskol['dynamicCameraOffset'].keepingLeft:
       self.AM.SA_add('laneSpeedKeeping', extra_text_1='LEFT', extra_text_2='Oncoming traffic in right lane')
@@ -325,6 +349,13 @@ class Controls:
       else:
         self.AM.SA_add(df_alert, extra_text_1=df_out.user_profile_text, extra_text_2='Dynamic follow: {} profile active'.format(df_out.user_profile_text))
         return
+
+    if not self.git_alerted:
+      # golden patched
+      git_hash = subprocess.check_output('git log -n 1 --pretty=format:%h', shell=True, encoding='UTF-8')
+      git_date = subprocess.check_output('git log -n 1 --pretty=format:%cd', shell=True, encoding='UTF-8')
+      self.AM.SA_add('gitVersion', extra_text_1='git hash: ' + str(git_hash), extra_text_2=str(git_date))
+      self.git_alerted = True
 
   def data_sample(self):
     """Receive data from sockets and update carState"""

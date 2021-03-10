@@ -136,6 +136,10 @@ typedef struct UIScene {
 
   // lead
   vertex_data lead_vertices[2];
+
+  // golden patched
+  int ego_lane_position = 0;
+
 } UIScene;
 
 typedef struct UIState {

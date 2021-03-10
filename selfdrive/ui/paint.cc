@@ -344,6 +344,23 @@ static void ui_draw_ls_button(UIState *s) {
   nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 255));
   nvgFontSize(s->vg, 45);
   nvgText(s->vg, btn_x - 34, btn_y + 50 + 15, "mode", NULL);
+
+  // golden patched
+  nvgFontSize(s->vg, 90);
+  nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 255));
+  const int x_ofset = s->scene.viz_rect.x + bdr_s * 4;
+  if (s->scene.ego_lane_position > 0)
+  {
+    nvgText(s->vg, x_ofset, s->scene.viz_rect.bottom() / 2.0 - 10, "____ Keep Left", NULL);
+  }
+  else if (s->scene.ego_lane_position < 0)
+  {
+    nvgText(s->vg, x_ofset, s->scene.viz_rect.bottom() / 2.0 - 10, "____ Keep Right", NULL);
+  }
+  else
+  {
+    nvgText(s->vg, x_ofset, s->scene.viz_rect.bottom() / 2.0 - 10, "____ Keep Center", NULL);
+  }
 }
 
 static void ui_draw_df_button(UIState *s) {
@@ -440,7 +457,7 @@ static void ui_draw_vision_alert(UIState *s) {
                   .h = alr_h};
 
   ui_fill_rect(s->vg, rect, color);
-  ui_fill_rect(s->vg, rect, nvgLinearGradient(s->vg, rect.x, rect.y, rect.x, rect.bottom(), 
+  ui_fill_rect(s->vg, rect, nvgLinearGradient(s->vg, rect.x, rect.y, rect.x, rect.bottom(),
                                             nvgRGBAf(0.0, 0.0, 0.0, 0.05), nvgRGBAf(0.0, 0.0, 0.0, 0.35)));
 
   nvgFillColor(s->vg, COLOR_WHITE);

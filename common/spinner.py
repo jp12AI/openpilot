@@ -4,10 +4,26 @@ import subprocess
 from common.basedir import BASEDIR
 
 
+# golden patched
+def fetch_git():
+    cur_git_hash = get_git_hash()
+    os.system("cd /data/openpilot; git pull;")
+    next_git_hash = get_git_hash()
+
+    os.system('echo ' + str(cur_git_hash) + ' > /tmp/git_hash')
+
+    if next_git_hash != cur_git_hash:
+      os.system('echo 1 > /tmp/op_git_updated')
+
+
 class Spinner():
   def __init__(self):
     self.update_t = -1
     self.sleep_t = 1 / 50.
+
+    # golden patched
+    fetch_git()
+
     try:
       self.spinner_proc = subprocess.Popen(["./spinner"],
                                            stdin=subprocess.PIPE,

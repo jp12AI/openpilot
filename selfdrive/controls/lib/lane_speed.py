@@ -71,6 +71,12 @@ class LaneSpeed:
     self.last_fastest_lane = 'none'
     self._setup()
 
+    # golden patch
+    self._ego_lane = 0
+    self._ego_lane_change_wait_frames = 0
+    self._lane_offset = 0.0
+    self._frames = 0
+
   def _setup(self):
     self.button_updated = False
     self.ls_state = self.op_params.get('lane_speed_alerts').strip().lower()
@@ -128,6 +134,9 @@ class LaneSpeed:
       self.get_fastest_lane()
     else:
       self.reset(reset_fastest=True)
+
+    # golden patch
+    self.update_ego_lane_position()
 
   def update_lane_bounds(self):  # todo: run this at half the rate of lane_speed
     # todo 2: add dPoly offsetting to lane bounds here as well, from group_tracks
@@ -272,6 +281,9 @@ class LaneSpeed:
     ls_send.laneSpeed.leftLaneOncoming = self.oncoming_lanes['left']
     ls_send.laneSpeed.rightLaneOncoming = self.oncoming_lanes['right']
 
+    # golden patched
+    ls_send.laneSpeed.egoLanePosition = self._ego_lane
+
     if self.last_ls_state != self.ls_state:  # show alert if button tapped and write to opParams
       self.op_params.put('lane_speed_alerts', LaneSpeedState.to_state[self.ls_state])
       ls_send.laneSpeed.state = LaneSpeedState.to_state[self.ls_state]
@@ -302,6 +314,61 @@ class LaneSpeed:
       if reset_fastest:
         self.lanes[lane].fastest_count = 0
 
+
+    # golden patch
+  def update_ego_lane_position(self):
+
+    LEFT_LANE = 1
+    MID_LANE = 0
+    RIGHT_LANE = -1
+
+    if self.v_ego > 10.0 / 3.6:
+      left_num = len(self.lanes['left'].tracks)
+      right_num = len(self.lanes['right'].tracks)
+
+      left_on_comming_num = len(self.lanes['left'].oncoming_tracks)
+      right_on_comming_num = len(self.lanes['right'].oncoming_tracks)
+
+      #print ('left:', left_num, ' vs right:', right_num)
+      #print ('left_on_comming_num:', left_on_comming_num, ' vs right_on_comming_num:', right_on_comming_num)
+
+      ego_lane_position = MID_LANE
+      if left_num > 0 and right_num > 0:
+        ego_lane_position = MID_LANE
+
+      if left_num > 0 and right_num == 0:
+        ego_lane_position = RIGHT_LANE
+
+      if right_num > 0 and left_num == 0:
+        ego_lane_position = LEFT_LANE
+
+      if ego_lane_position != self._ego_lane:
+        #print ('left:', left_num, ' vs right:', right_num)
+        #print ('left_on_comming_num:', left_on_comming_num)
+
+        self._ego_lane_change_wait_frames += 1
+        if self._ego_lane_change_wait_frames >= 10:
+          if self._ego_lane != MID_LANE:
+            # you can change directly from left to right
+            self._ego_lane = MID_LANE
+          else:
+            self._ego_lane = ego_lane_position
+          print (self._ego_lane)
+          self._ego_lane_change_wait_frames = 0
+      else:
+        self._ego_lane_change_wait_frames = 0
+    else:
+      self._ego_lane = MID_LANE
+
+      # offset = 0.0
+      # if self._ego_lane == LEFT_LANE:
+      #   offset = 0.2
+      # elif self._ego_lane == RIGHT_LANE:
+      #   offset = -0.2
+
+      # if self._lane_offset != offset:
+      #   self.op_params.put('lane_offset', offset)
+      #   self._lane_offset = offset
 
 # class Track:
 #   def __init__(self, vRel, yRel, dRel):

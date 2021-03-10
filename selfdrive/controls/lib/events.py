@@ -212,6 +212,39 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
   # ********** events with no alerts **********
 
   # ********** events only containing alerts displayed in all states **********
+  #golden patched
+'commIssueAlert': {
+    ET.PERMANENT: Alert(
+      "",
+      "",
+      AlertStatus.critical, AlertSize.full,
+      Priority.MID, VisualAlert.none, AudibleAlert.none, .4, 0., 2),
+  },
+
+'gitVersion': {
+    ET.PERMANENT: Alert(
+      "",
+      "",
+      AlertStatus.normal, AlertSize.full,
+      Priority.HIGHEST, VisualAlert.none, AudibleAlert.none, .4, 0., 8),
+  },
+
+'navigation': {
+    ET.PERMANENT: Alert(
+      "",
+      "",
+      AlertStatus.normal, AlertSize.mid,
+      Priority.LOW, VisualAlert.none, AudibleAlert.none, 0, 0, 2.0),
+  },
+
+'nav_connected': {
+    ET.PERMANENT: Alert(
+      "Navigation system connected",
+      "Keep alert",
+      AlertStatus.normal, AlertSize.full,
+      Priority.HIGH, VisualAlert.none, AudibleAlert.none, 0, 0, 5.0),
+  },
+
 
   'modelLongAlert': {
     ET.PERMANENT: Alert(
@@ -269,12 +302,13 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
       Priority.LOW, VisualAlert.none, AudibleAlert.none, .2, 0., .1),
   },
 
+  # golden patched
   EventName.debugAlert: {
     ET.PERMANENT: Alert(
-      "DEBUG ALERT",
-      "",
-      AlertStatus.userPrompt, AlertSize.mid,
-      Priority.LOW, VisualAlert.none, AudibleAlert.none, .1, .1, .1),
+      "Git updated",
+      "Reboot your device",
+      AlertStatus.normal, AlertSize.full,
+      Priority.LOW, VisualAlert.none, AudibleAlert.chimeWarning1, 2, 2, 2),
   },
 
   EventName.startup: {
