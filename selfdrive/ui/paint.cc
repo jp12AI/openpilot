@@ -520,6 +520,9 @@ static void ui_draw_ml_button(UIState *s) {
   int btn_x = x - btn_w / 2;
   int btn_y = y - btn_h / 2;
 
+  // golden
+  return;
+
   nvgBeginPath(s->vg);
   nvgRoundedRect(s->vg, btn_x, btn_y, btn_w, btn_h, 25);
   if (s->scene.mlButtonEnabled) {  // change outline color based on status of button
@@ -555,7 +558,7 @@ static void ui_draw_vision_header(UIState *s) {
 
   ui_draw_df_button(s);
   ui_draw_ls_button(s);
-  // ui_draw_ml_button(s);
+  ui_draw_ml_button(s);
 }
 
 static void ui_draw_vision_footer(UIState *s) {
