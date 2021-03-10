@@ -237,6 +237,14 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
       Priority.LOW, VisualAlert.none, AudibleAlert.none, 0, 0, 2.0),
   },
 
+'nav_connected': {
+    ET.PERMANENT: Alert(
+      "Navigation system connected",
+      "Keep alert",
+      AlertStatus.normal, AlertSize.full,
+      Priority.HIGH, VisualAlert.none, AudibleAlert.none, 0, 0, 5.0),
+  },
+
 'modelLongAlert': {
     ET.PERMANENT: Alert(
       "Model longitudinal ",

@@ -87,6 +87,7 @@ class Controls:
     self.git_check_time = sec_since_boot()
     self.git_alert_times = 6
     self.git_alerted = False
+    self.nav_alerted = False
 
     self.can_sock = can_sock
     if can_sock is None:
@@ -338,7 +339,13 @@ class Controls:
       self.AM.SA_add('modelLongAlert', extra_text_1=extra_text_1, extra_text_2=extra_text_2)
       return
 
+    # golden patched
     if self.sm_smiskol.updated['liveMapData']:
+      if not self.nav_alerted:
+        self.nav_alerted = True
+        self.AM.SA_add('nav_connected')
+        return
+
       map_data = self.sm_smiskol['liveMapData']
       if map_data.speedAdvisoryValid and map_data.distToTurn < 500:
         dist_text_1 = str(int(map_data.distToTurn)) + " m to off ramp"
