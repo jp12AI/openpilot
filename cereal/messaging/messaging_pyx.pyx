@@ -7,11 +7,11 @@ from libcpp cimport bool
 from libc cimport errno
 
 
-from messaging cimport Context as cppContext
-from messaging cimport SubSocket as cppSubSocket
-from messaging cimport PubSocket as cppPubSocket
-from messaging cimport Poller as cppPoller
-from messaging cimport Message as cppMessage
+from .messaging cimport Context as cppContext
+from .messaging cimport SubSocket as cppSubSocket
+from .messaging cimport PubSocket as cppPubSocket
+from .messaging cimport Poller as cppPoller
+from .messaging cimport Message as cppMessage
 
 
 class MessagingError(Exception):
@@ -59,12 +59,12 @@ cdef class Poller:
     cdef int t = timeout
 
     with nogil:
-        result = self.poller.poll(t)
+      result = self.poller.poll(t)
 
     for s in result:
-        socket = SubSocket()
-        socket.setPtr(s)
-        sockets.append(socket)
+      socket = SubSocket()
+      socket.setPtr(s)
+      sockets.append(socket)
 
     return sockets
 
@@ -110,25 +110,6 @@ cdef class SubSocket:
       if errno.errno == errno.EINTR:
         print("SIGINT received, exiting")
         sys.exit(1)
-
-      return None
-    else:
-      sz = msg.getSize()
-      m = msg.getData()[:sz]
-      del msg
-
-      return m
-
-  # golden patched
-  def receive_golden(self, bool non_blocking=False):
-    msg = self.socket.receive(non_blocking)
-
-    if msg == NULL:
-      # If a blocking read returns no message check errno if SIGINT was caught in the C++ code
-      if errno.errno == errno.EINTR:
-        pass
-        #print("SIGINT received, exiting, golden")
-        #sys.exit(1)
 
       return None
     else:

@@ -1,20 +1,15 @@
 from cereal import car
-from common.numpy_fast import clip
+from common.numpy_fast import clip, interp
 from selfdrive.car import apply_toyota_steer_torque_limits, create_gas_command, make_can_msg
 from selfdrive.car.toyota.toyotacan import create_steer_command, create_ui_command, \
                                            create_accel_command, create_acc_cancel_command, \
                                            create_fcw_command
-from selfdrive.car.toyota.values import Ecu, CAR, STATIC_MSGS, NO_STOP_TIMER_CAR, MIN_ACC_SPEED, SteerLimitParams
+from selfdrive.car.toyota.values import Ecu, CAR, STATIC_MSGS, NO_STOP_TIMER_CAR, CarControllerParams, MIN_ACC_SPEED
 from opendbc.can.packer import CANPacker
 from common.op_params import opParams
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 
-# Accel limits
-ACCEL_HYST_GAP = 0.02  # don't change accel command for small oscilalitons within this value
-ACCEL_MAX = 1.5  # 1.5 m/s2
-ACCEL_MIN = -3.0  # 3   m/s2
-ACCEL_SCALE = max(ACCEL_MAX, -ACCEL_MIN)
 
 def accel_hysteresis(accel, accel_steady, enabled):
 
@@ -22,13 +17,27 @@ def accel_hysteresis(accel, accel_steady, enabled):
   if not enabled:
     # send 0 when disabled, otherwise acc faults
     accel_steady = 0.
-  elif accel > accel_steady + ACCEL_HYST_GAP:
-    accel_steady = accel - ACCEL_HYST_GAP
-  elif accel < accel_steady - ACCEL_HYST_GAP:
-    accel_steady = accel + ACCEL_HYST_GAP
+  elif accel > accel_steady + CarControllerParams.ACCEL_HYST_GAP:
+    accel_steady = accel - CarControllerParams.ACCEL_HYST_GAP
+  elif accel < accel_steady - CarControllerParams.ACCEL_HYST_GAP:
+    accel_steady = accel + CarControllerParams.ACCEL_HYST_GAP
   accel = accel_steady
 
   return accel, accel_steady
+
+
+def coast_accel(speed):  # given a speed, output coasting acceleration
+  points = [[0.0, 0.03], [.166, .424], [.335, .568],
+            [.731, .440], [1.886, 0.262], [2.809, -0.207],
+            [3.443, -0.249], [MIN_ACC_SPEED, -0.145]]
+  return interp(speed, *zip(*points))
+
+
+def compute_gb_pedal(accel, speed):
+  _a3, _a4, _a5, _offset, _e1, _e2, _e3, _e4, _e5, _e6, _e7, _e8 = [-0.07264304340456754, -0.007522016704006004, 0.16234124452228196, 0.0029096574419830296, 1.1674372321165579e-05, -0.008010070095545522, -5.834025253616562e-05, 0.04722441060805912, 0.001887454016549489, -0.0014370672920621269, -0.007577594283906699, 0.01943515032956308]
+  speed_part = (_e5 * accel + _e6) * speed ** 2 + (_e7 * accel + _e8) * speed
+  accel_part = ((_e1 * speed + _e2) * accel ** 5 + (_e3 * speed + _e4) * accel ** 4 + _a3 * accel ** 3 + _a4 * accel ** 2 + _a5 * accel)
+  return speed_part + accel_part + _offset
 
 
 class CarController():
@@ -38,8 +47,7 @@ class CarController():
     self.alert_active = False
     self.last_standstill = False
     self.standstill_req = False
-    self.op_params = opParams()
-    self.standstill_hack = self.op_params.get('standstill_hack')
+    self.standstill_hack = opParams().get('standstill_hack')
 
     self.steer_rate_limited = False
 
@@ -57,26 +65,26 @@ class CarController():
     # *** compute control surfaces ***
 
     # gas and brake
+    apply_gas = 0.
+    apply_accel = actuators.gas - actuators.brake
 
-    apply_gas = clip(actuators.gas, 0., 1.)
-
-    if CS.CP.enableGasInterceptor and CS.out.vEgo < MIN_ACC_SPEED:
-      # send only negative accel if interceptor is detected. otherwise, send the regular value
-      # +0.06 offset to reduce ABS pump usage when OP is engaged
+    if CS.CP.enableGasInterceptor and enabled and CS.out.vEgo < MIN_ACC_SPEED:
+      # converts desired acceleration to gas percentage for pedal
+      # +0.06 offset to reduce ABS pump usage when applying very small gas
+      if apply_accel * CarControllerParams.ACCEL_SCALE > coast_accel(CS.out.vEgo):
+        apply_gas = clip(compute_gb_pedal(apply_accel * CarControllerParams.ACCEL_SCALE, CS.out.vEgo), 0., 1.)
       apply_accel = 0.06 - actuators.brake
-    else:
-      apply_accel = actuators.gas - actuators.brake
 
     apply_accel, self.accel_steady = accel_hysteresis(apply_accel, self.accel_steady, enabled)
-    apply_accel = clip(apply_accel * ACCEL_SCALE, ACCEL_MIN, ACCEL_MAX)
+    apply_accel = clip(apply_accel * CarControllerParams.ACCEL_SCALE, CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX)
 
     # steer torque
-    new_steer = int(round(actuators.steer * SteerLimitParams.STEER_MAX))
-    apply_steer = apply_toyota_steer_torque_limits(new_steer, self.last_steer, CS.out.steeringTorqueEps, SteerLimitParams)
+    new_steer = int(round(actuators.steer * CarControllerParams.STEER_MAX))
+    apply_steer = apply_toyota_steer_torque_limits(new_steer, self.last_steer, CS.out.steeringTorqueEps, CarControllerParams)
     self.steer_rate_limited = new_steer != apply_steer
 
-    # Cut steering for duration of known fault
-    if not enabled or CS.steer_state in [9, 25] or (abs(CS.out.steeringRate) >= 100 and self.op_params.get('steer_fault_fix')):
+    # Cut steering while we're in a known fault state (2s)
+    if not enabled or CS.steer_state in [9, 25] or abs(CS.out.steeringRateDeg) > 100:
       apply_steer = 0
       apply_steer_req = 0
     else:
@@ -111,7 +119,7 @@ class CarController():
       # LTA mode. Set ret.steerControlType = car.CarParams.SteerControlType.angle and whitelist 0x191 in the panda
       # if frame % 2 == 0:
       #   can_sends.append(create_steer_command(self.packer, 0, 0, frame // 2))
-      #   can_sends.append(create_lta_steer_command(self.packer, actuators.steerAngle, apply_steer_req, frame // 2))
+      #   can_sends.append(create_lta_steer_command(self.packer, actuators.steeringAngleDeg, apply_steer_req, frame // 2))
 
     # we can spam can to cancel the system even if we are using lat only control
     if (frame % 3 == 0 and CS.CP.openpilotLongitudinalControl) or (pcm_cancel_cmd and Ecu.fwdCamera in self.fake_ecus):
@@ -125,7 +133,7 @@ class CarController():
       else:
         can_sends.append(create_accel_command(self.packer, 0, pcm_cancel_cmd, False, lead))
 
-    if frame % 2 == 0 and CS.CP.enableGasInterceptor and CS.out.vEgo < MIN_ACC_SPEED:
+    if (frame % 2 == 0) and (CS.CP.enableGasInterceptor):
       # send exactly zero if apply_gas is zero. Interceptor will send the max between read value and apply_gas.
       # This prevents unexpected pedal range rescaling
       can_sends.append(create_gas_command(self.packer, apply_gas, frame//2))

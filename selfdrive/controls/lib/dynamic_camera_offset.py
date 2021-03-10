@@ -61,15 +61,7 @@ class DynamicCameraOffset:  # keeps away from oncoming traffic
         return self.camera_offset + dynamic_offset
 
       self.i = 0  # reset when not active
-
-    # golden patched
-    ego_lane_pos = self.sm['laneSpeed'].egoLanePosition
-    ret_offset = self.camera_offset
-
-    # golden TODO, 0.2 should be tweaked, normally it feels OK
-    ret_offset += float(ego_lane_pos) * 0.2
-
-    return ret_offset  # don't offset if no lane line in direction we're going to hug
+    return self.camera_offset  # don't offset if no lane line in direction we're going to hug
 
   def _get_camera_offset(self, v_ego, active, angle_steers):
     self.keeping_left, self.keeping_right = False, False  # reset keeping

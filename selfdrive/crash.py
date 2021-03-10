@@ -3,12 +3,12 @@ import os
 import sys
 import threading
 import capnp
-from selfdrive.version import version, dirty
+from selfdrive.version import version, dirty, origin, branch
 import traceback
 from datetime import datetime
 
+from selfdrive.hardware import PC
 from selfdrive.swaglog import cloudlog
-from common.hardware import PC
 
 if os.getenv("NOLOG") or os.getenv("NOCRASH") or PC:
   def capture_exception(*args, **kwargs):

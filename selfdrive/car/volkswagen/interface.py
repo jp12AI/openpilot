@@ -6,6 +6,7 @@ from selfdrive.car.interfaces import CarInterfaceBase
 GEAR = car.CarState.GearShifter
 EventName = car.CarEvent.EventName
 
+
 class CarInterface(CarInterfaceBase):
   def __init__(self, CP, CarController, CarState):
     super().__init__(CP, CarController, CarState)
@@ -24,7 +25,7 @@ class CarInterface(CarInterfaceBase):
     # VW port is a community feature, since we don't own one to test
     ret.communityFeature = True
 
-    if candidate == CAR.GOLF:
+    if candidate in [CAR.GOLF, CAR.AUDI_A3]:
       # Set common MQB parameters that will apply globally
       ret.carName = "volkswagen"
       ret.radarOffCan = True

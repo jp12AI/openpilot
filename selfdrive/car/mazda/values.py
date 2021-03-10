@@ -7,7 +7,7 @@ Ecu = car.CarParams.Ecu
 
 # Steer torque limits
 
-class SteerLimitParams:
+class CarControllerParams:
   STEER_MAX = 600                 # max_steer 2048
   STEER_STEP = 1                  # how often we update the steer cmd
   STEER_DELTA_UP = 10             # torque increase per refresh
@@ -74,7 +74,6 @@ FINGERPRINTS = {
 ECU_FINGERPRINT = {
   Ecu.fwdCamera: [579],   # steer torque cmd
 }
-
 
 DBC = {
   CAR.CX5: dbc_dict('mazda_2017', None),

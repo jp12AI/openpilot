@@ -14,9 +14,6 @@ from selfdrive.controls.lib.dynamic_follow.support import LeadData, CarData, dfD
 from common.data_collector import DataCollector
 travis = False
 
-#golden patched
-from common.is_shane import is_golden
-
 
 class DistanceModController:
   def __init__(self, k_i, k_d, x_clip, mods):
@@ -46,7 +43,7 @@ class DistanceModController:
     fact = interp(self.i, self._to_clip, self._mods)
     self.last_error = float(error)
 
-    print("I: {}, FACT: {}".format(round(self.i, 4), round(fact, 3)))
+    # print("I: {}, FACT: {}".format(round(self.i, 4), round(fact, 3)))
     return fact
 
   def _slow_reset(self):
@@ -277,8 +274,8 @@ class DynamicFollow:
     self.last_effective_profile = df_profile
 
     x_vel = [0.0, 1.8627, 3.7253, 5.588, 7.4507, 9.3133, 11.5598, 13.645, 22.352, 31.2928, 33.528, 35.7632, 40.2336]  # velocities
-    if df_profile == self.df_profiles.roadtrip:
-      y_dist = [1.6428, 1.646, 1.6514, 1.6591, 1.6744, 1.6992, 1.7422, 1.7739, 1.8335, 1.8687, 1.8755, 1.8833, 1.8961]  # TRs
+    if df_profile == self.df_profiles.stock:
+      return 1.8
     elif df_profile == self.df_profiles.traffic:  # for in congested traffic
       x_vel = [0.0, 1.892, 3.7432, 5.8632, 8.0727, 10.7301, 14.343, 17.6275, 22.4049, 28.6752, 34.8858, 40.35]
       y_dist = [1.3781, 1.3791, 1.3457, 1.3134, 1.3145, 1.318, 1.3485, 1.257, 1.144, 0.979, 0.9461, 0.9156]
@@ -368,7 +365,3 @@ class DynamicFollow:
     self.min_TR = self.op_params.get('min_TR')
     if self.min_TR != 1.:
       self.min_TR = clip(self.min_TR, 0.85, 1.6)
-
-    if is_golden:
-      self.global_df_mod = 0.85
-      self.min_TR = 0.85

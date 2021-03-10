@@ -1,26 +1,14 @@
 import os
+import time
 import subprocess
 from common.basedir import BASEDIR
 
-# golden patched
-def get_git_hash():
-    return subprocess.check_output('git log -n 1 --pretty=format:%h', shell=True)
 
 class Spinner():
   def __init__(self):
+    self.update_t = -1
+    self.sleep_t = 1 / 50.
     try:
-
-      # golden patched
-      cur_git_hash = get_git_hash()
-      os.system("cd /data/openpilot; git pull;")
-      next_git_hash = get_git_hash()
-
-      os.system('echo ' + str(cur_git_hash) + ' > /tmp/git_hash')
-
-      if next_git_hash != cur_git_hash:
-        os.system('echo 1 > /tmp/op_git_updated')
-
-
       self.spinner_proc = subprocess.Popen(["./spinner"],
                                            stdin=subprocess.PIPE,
                                            cwd=os.path.join(BASEDIR, "selfdrive", "ui"),
@@ -31,13 +19,21 @@ class Spinner():
   def __enter__(self):
     return self
 
-  def update(self, spinner_text):
+  def update(self, spinner_text: str):
     if self.spinner_proc is not None:
       self.spinner_proc.stdin.write(spinner_text.encode('utf8') + b"\n")
       try:
         self.spinner_proc.stdin.flush()
       except BrokenPipeError:
         pass
+
+  def update_progress(self, cur: int, total: int):
+    elapsed_t = time.time() - self.update_t
+    if elapsed_t < self.sleep_t:
+      time.sleep(self.sleep_t - elapsed_t)
+
+    self.update(str(round(100 * cur / total)))
+    self.update_t = time.time()
 
   def close(self):
     if self.spinner_proc is not None:
@@ -56,7 +52,6 @@ class Spinner():
 
 
 if __name__ == "__main__":
-  import time
   with Spinner() as s:
     s.update("Spinner text")
     time.sleep(5.0)

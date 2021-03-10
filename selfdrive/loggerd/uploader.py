@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-import ctypes
-import inspect
 import json
 import os
 import random
@@ -12,7 +10,7 @@ import subprocess
 import re
 
 from cereal import log
-from common.hardware import HARDWARE
+import cereal.messaging as messaging
 from common.api import Api
 from common.params import Params
 from selfdrive.loggerd.xattr_cache import getxattr, setxattr
@@ -20,35 +18,15 @@ from selfdrive.loggerd.config import ROOT
 from selfdrive.swaglog import cloudlog
 from common.op_params import opParams
 
-NetworkType = log.ThermalData.NetworkType
+NetworkType = log.DeviceState.NetworkType
 UPLOAD_ATTR_NAME = 'user.upload'
 UPLOAD_ATTR_VALUE = b'1'
 
+allow_sleep = bool(os.getenv("UPLOADER_SLEEP", "1"))
+force_wifi = os.getenv("FORCEWIFI") is not None
 fake_upload = os.getenv("FAKEUPLOAD") is not None
 upload_on_hotspot = opParams().get('upload_on_hotspot')
 
-
-def raise_on_thread(t, exctype):
-  '''Raises an exception in the threads with id tid'''
-  for ctid, tobj in threading._active.items():
-    if tobj is t:
-      tid = ctid
-      break
-  else:
-    raise Exception("Could not find thread")
-
-  if not inspect.isclass(exctype):
-    raise TypeError("Only types can be raised (not instances)")
-
-  res = ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(tid),
-                                                   ctypes.py_object(exctype))
-  if res == 0:
-    raise ValueError("invalid thread id")
-  elif res != 1:
-    # "if it returns a number greater than one, you're in trouble,
-    # and you should call it again with exc=NULL to revert the effect"
-    ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, 0)
-    raise SystemError("PyThreadState_SetAsyncExc failed")
 
 def get_directory_sort(d):
   return list(map(lambda s: s.rjust(10, '0'), d.rsplit('--', 1)))
@@ -72,14 +50,12 @@ def clear_locks(root):
     except OSError:
       cloudlog.exception("clear_locks failed")
 
-def is_on_wifi():
-  return HARDWARE.get_network_type() == NetworkType.wifi
 
 def is_on_hotspot():
   try:
     result = subprocess.check_output(["ifconfig", "wlan0"], stderr=subprocess.STDOUT, encoding='utf8')
     result = re.findall(r"inet addr:((\d+\.){3}\d+)", result)[0][0]
-    is_android = result.startswith('192.168.43.') or (result.startswith('192.168.') and result.endswith('.20'))
+    is_android = result.startswith('192.168.43.') or (result.startswith('192.168.') and result.endswith('.20'))  # 2nd is Android 11
     is_ios = result.startswith('172.20.10.')
     is_entune = result.startswith('10.0.2.')
     return (is_android or is_ios or is_entune)
@@ -98,6 +74,7 @@ class Uploader():
     self.last_resp = None
     self.last_exc = None
 
+    self.immediate_folders = ["crash/", "boot/"]
     self.immediate_priority = {"qlog.bz2": 0, "qcamera.ts": 1}
     self.high_priority = {"rlog.bz2": 0, "fcamera.hevc": 1, "dcamera.hevc": 2, "ecamera.hevc": 3}
 
@@ -138,7 +115,7 @@ class Uploader():
 
     # try to upload qlog files first
     for name, key, fn in upload_files:
-      if name in self.immediate_priority:
+      if name in self.immediate_priority or any(f in fn for f in self.immediate_folders):
         return (key, fn)
 
     if with_raw:
@@ -237,17 +214,15 @@ def uploader_fn(exit_event):
     cloudlog.info("uploader missing dongle_id")
     raise Exception("uploader can't start without dongle id")
 
+  sm = messaging.SubMaster(['deviceState'])
   uploader = Uploader(dongle_id, ROOT)
 
   backoff = 0.1
-  counter = 0
-  on_wifi = False
   while not exit_event.is_set():
+    sm.update(0)
+    on_wifi = force_wifi or sm['deviceState'].networkType == NetworkType.wifi
     offroad = params.get("IsOffroad") == b'1'
-    allow_raw_upload = (params.get("IsUploadRawEnabled") != b"0") and offroad
-    if offroad and counter % 12 == 0:
-      on_wifi = is_on_wifi()
-    counter += 1
+    allow_raw_upload = params.get("IsUploadRawEnabled") != b"0"
 
     d = None
     on_hotspot = is_on_hotspot()
@@ -255,7 +230,8 @@ def uploader_fn(exit_event):
       d = uploader.next_file_to_upload(with_raw=allow_raw_upload and on_wifi and offroad)
 
     if d is None:  # Nothing to upload
-      time.sleep(60 if offroad else 5)
+      if allow_sleep:
+        time.sleep(60 if offroad else 5)
       continue
 
     key, fn = d
@@ -265,7 +241,7 @@ def uploader_fn(exit_event):
     success = uploader.upload(key, fn)
     if success:
       backoff = 0.1
-    else:
+    elif allow_sleep:
       cloudlog.info("backoff %r", backoff)
       time.sleep(backoff + random.uniform(0, backoff))
       backoff = min(backoff*2, 120)

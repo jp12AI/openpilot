@@ -60,8 +60,8 @@ class opParams:
     """
 
     self.fork_params = {'camera_offset': Param(0.06, NUMBER, 'Your camera offset to use in lane_planner.py', live=True),
-                        'dynamic_follow': Param('auto', str, 'Can be: (\'traffic\', \'relaxed\', \'roadtrip\'): Left to right increases in following distance.\n'
-                                                             'All profiles support dynamic follow so you\'ll get your preferred distance while\n'
+                        'dynamic_follow': Param('auto', str, 'Can be: (\'traffic\', \'relaxed\', \'stock\'): Left to right increases in following distance.\n'
+                                                             'All profiles support dynamic follow except stock so you\'ll get your preferred distance while\n'
                                                              'retaining the smoothness and safety of dynamic follow!'),
                         'global_df_mod': Param(1.0, NUMBER, 'The multiplier for the current distance used by dynamic follow. The range is limited from 0.85 to 2.5\n'
                                                             'Smaller values will get you closer, larger will get you farther\n'
@@ -73,8 +73,8 @@ class opParams:
                         'alca_min_speed': Param(25.0, NUMBER, 'The minimum speed allowed for an automatic lane change (in MPH)'),
                         'steer_ratio': Param(None, NONE_OR_NUMBER, '(Can be: None, or a float) If you enter None, openpilot will use the learned sR.\n'
                                                                    'If you use a float/int, openpilot will use that steer ratio instead', live=True),
-                        'lane_speed_alerts': Param('silent', str, 'Can be: (\'off\', \'silent\', \'audible\')\n'
-                                                                  'Whether you want openpilot to alert you of faster-traveling adjacent lanes'),
+                        # 'lane_speed_alerts': Param('silent', str, 'Can be: (\'off\', \'silent\', \'audible\')\n'
+                        #                                           'Whether you want openpilot to alert you of faster-traveling adjacent lanes'),
                         'upload_on_hotspot': Param(False, bool, 'If False, openpilot will not upload driving data while connected to your phone\'s hotspot'),
                         'enable_long_derivative': Param(False, bool, 'If you have longitudinal overshooting, enable this! This enables derivative-based\n'
                                                                      'integral wind-down to help reduce overshooting within the long PID loop'),
@@ -82,16 +82,14 @@ class opParams:
                         'update_behavior': Param('auto', str, 'Can be: (\'off\', \'alert\', \'auto\') without quotes\n'
                                                               'off will never update, alert shows an alert on-screen\n'
                                                               'auto will reboot the device when an update is seen'),
-                        'dynamic_gas': Param(True, bool, 'Whether to use dynamic gas if your car is supported'),
+                        'dynamic_gas': Param(False, bool, 'Whether to use dynamic gas if your car is supported'),
                         'hide_auto_df_alerts': Param(False, bool, 'Hides the alert that shows what profile the model has chosen'),
                         'log_auto_df': Param(False, bool, 'Logs dynamic follow data for auto-df'),
-                        'dynamic_camera_offset': Param(False, bool, 'Whether to automatically keep away from oncoming traffic.\n'
-                                                                    'Works from 35 to ~60 mph (requires radar)'),
-                        'dynamic_camera_offset_time': Param(3.5, NUMBER, 'How long to keep away from oncoming traffic in seconds after losing lead'),
+                        # 'dynamic_camera_offset': Param(False, bool, 'Whether to automatically keep away from oncoming traffic.\n'
+                        #                                             'Works from 35 to ~60 mph (requires radar)'),
+                        # 'dynamic_camera_offset_time': Param(3.5, NUMBER, 'How long to keep away from oncoming traffic in seconds after losing lead'),
                         'support_white_panda': Param(False, bool, 'Enable this to allow engagement with the deprecated white panda.\n'
                                                                   'localizer might not work correctly'),
-                        'slowdown_for_curves': Param(True, bool, 'Whether your car will slow down for curves using the old planner code from 0.5/0.6'),
-                        'steer_fault_fix': Param(True, bool, live=True),
 
                         'prius_use_pid': Param(False, bool, 'This enables the PID lateral controller with new a experimental derivative tune\n'
                                                             'False: stock INDI, True: TSS2-tuned PID'),
@@ -105,7 +103,7 @@ class opParams:
     self._last_read_time = sec_since_boot()
     self.read_frequency = 3  # max frequency to read with self.get(...) (sec)
     self._to_delete = ['steer_rate_fix']  # a list of unused params you want to delete from users' params file
-    self._to_reset = []  # a list of params you want to be reset to the default value
+    self._to_reset = ['dynamic_gas']  # a list of params you want reset to their default values
     self._run_init()  # restores, reads, and updates params
 
   def _run_init(self):  # does first time initializing of default params

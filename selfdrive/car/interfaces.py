@@ -1,20 +1,23 @@
 import os
 import time
+from typing import Dict
+
 from cereal import car
 from common.kalman.simple_kalman import KF1D
 from common.realtime import DT_CTRL
 from selfdrive.car import gen_empty_fingerprint
 from selfdrive.config import Conversions as CV
+from selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX
 from selfdrive.controls.lib.events import Events
 from selfdrive.controls.lib.vehicle_model import VehicleModel
-from selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX
 from common.op_params import opParams
 
 GearShifter = car.CarState.GearShifter
 EventName = car.CarEvent.EventName
-MAX_CTRL_SPEED = (V_CRUISE_MAX + 4) * CV.KPH_TO_MS  # 144 + 4 = 92 mph
+MAX_CTRL_SPEED = (V_CRUISE_MAX + 4) * CV.KPH_TO_MS  # 135 + 4 = 86 mph
 
 # generic car and radar interfaces
+
 
 class CarInterfaceBase():
   def __init__(self, CP, CarController, CarState):
@@ -52,7 +55,7 @@ class CarInterfaceBase():
   def get_std_params(candidate, fingerprint, has_relay):
     ret = car.CarParams.new_message()
     ret.carFingerprint = candidate
-    ret.isPandaBlack = has_relay
+    ret.isPandaBlackDEPRECATED = has_relay
 
     # standard ALC params
     ret.steerControlType = car.CarParams.SteerControlType.torque
@@ -70,6 +73,9 @@ class CarInterfaceBase():
     ret.brakeMaxV = [1.]
     ret.openpilotLongitudinalControl = False
     ret.startAccel = 0.0
+    ret.minSpeedCan = 0.3
+    ret.stoppingBrakeRate = 0.2 # brake_travel/s while trying to stop
+    ret.startingBrakeRate = 0.8 # brake_travel/s while releasing on restart
     ret.stoppingControl = False
     ret.longitudinalTuning.deadzoneBP = [0.]
     ret.longitudinalTuning.deadzoneV = [0.]
@@ -121,8 +127,8 @@ class CarInterfaceBase():
     # Disable on rising edge of gas or brake. Also disable on brake when speed > 0.
     # Optionally allow to press gas at zero speed to resume.
     # e.g. Chrysler does not spam the resume button yet, so resuming with gas is handy. FIXME!
-    if (cs_out.gasPressed and (not self.CS.out.gasPressed) and self.disengage_on_gas and cs_out.vEgo > gas_resume_speed) or \
-            (cs_out.brakePressed and (not self.CS.out.brakePressed or not cs_out.standstill)):  # still disengages on brake!
+    if (self.disengage_on_gas and cs_out.gasPressed and (not self.CS.out.gasPressed) and cs_out.vEgo > gas_resume_speed) or \
+       (cs_out.brakePressed and (not self.CS.out.brakePressed or not cs_out.standstill)):
       events.add(EventName.pedalPressed)
 
     # we engage when pcm is active (rising edge)
@@ -133,6 +139,7 @@ class CarInterfaceBase():
         events.add(EventName.pcmDisable)
 
     return events
+
 
 class RadarInterfaceBase():
   def __init__(self, CP):
@@ -146,6 +153,7 @@ class RadarInterfaceBase():
     if not self.no_radar_sleep:
       time.sleep(self.radar_ts)  # radard runs on RI updates
     return ret
+
 
 class CarStateBase:
   def __init__(self, CP):
@@ -177,10 +185,13 @@ class CarStateBase:
     return self.left_blinker_cnt > 0, self.right_blinker_cnt > 0
 
   @staticmethod
-  def parse_gear_shifter(gear):
-    return {'P': GearShifter.park, 'R': GearShifter.reverse, 'N': GearShifter.neutral,
-            'E': GearShifter.eco, 'T': GearShifter.manumatic, 'D': GearShifter.drive,
-            'S': GearShifter.sport, 'L': GearShifter.low, 'B': GearShifter.brake}.get(gear, GearShifter.unknown)
+  def parse_gear_shifter(gear: str) -> car.CarState.GearShifter:
+    d: Dict[str, car.CarState.GearShifter] = {
+        'P': GearShifter.park, 'R': GearShifter.reverse, 'N': GearShifter.neutral,
+        'E': GearShifter.eco, 'T': GearShifter.manumatic, 'D': GearShifter.drive,
+        'S': GearShifter.sport, 'L': GearShifter.low, 'B': GearShifter.brake
+    }
+    return d.get(gear, GearShifter.unknown)
 
   @staticmethod
   def get_cam_can_parser(CP):
