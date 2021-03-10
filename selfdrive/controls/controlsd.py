@@ -347,7 +347,7 @@ class Controls:
         return
 
       map_data = self.sm_smiskol['liveMapData']
-      if map_data.speedAdvisoryValid and map_data.distToTurn < 500:
+      if map_data.speedAdvisoryValid and map_data.distToTurn < 1000:
         dist_text_1 = str(int(map_data.distToTurn)) + " m to off ramp"
         dist_text_2 = str(int(map_data.speedAdvisory)) + " m to destination"
         self.AM.SA_add('navigation', extra_text_1=str(dist_text_1), extra_text_2=str(dist_text_2))
