@@ -555,7 +555,7 @@ static void ui_draw_vision_header(UIState *s) {
 
   ui_draw_df_button(s);
   ui_draw_ls_button(s);
-  ui_draw_ml_button(s);
+  // ui_draw_ml_button(s);
 }
 
 static void ui_draw_vision_footer(UIState *s) {
