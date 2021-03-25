@@ -67,7 +67,7 @@ class DynamicCameraOffset:  # keeps away from oncoming traffic
     ret_offset = self.camera_offset
 
     # golden TODO, 0.2 should be tweaked, normally it feels OK
-    ret_offset += float(ego_lane_pos) * 0.2
+    ret_offset += float(ego_lane_pos) * 0.01
 
     return ret_offset  # don't offset if no lane line in direction we're going to hug
 
